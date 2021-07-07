@@ -1,0 +1,269 @@
+/*
+ * Grid styles are defined as follows:
+ *
+ * 1 2 3
+ * 4 5 6
+ * 7 8 9
+ *
+ * The number corresponds to the direction elements are pushed
+ */
+.flexRow {
+    display: -webkit-flex;
+    flex-direction: row;
+}
+
+%flexRow {
+    display: -webkit-flex;
+    flex-direction: row;
+}
+
+.flexColumn {
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%flexColumn {
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid1 {
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.flexGrid1 {
+    flex: 1;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%flexGrid1 {
+    flex: 1;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.flexGrid2 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+%flexGrid2 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.flexGrid3 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+%flexGrid3 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.flexGrid4 {
+    flex: 1;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+%flexGrid4 {
+    flex: 1;
+    display: -webkit-flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.flexGrid5 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+%flexGrid5 {
+    flex: 1;
+    display: -webkit-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.flexGrid6 {
+    flex: 1;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+%flexGrid6 {
+    flex: 1;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.flexGrid7 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%flexGrid7 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.flexGrid8 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+%flexGrid8 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.flexGrid9 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+%flexGrid9 {
+    flex: 1;
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.grid2 {
+    align-items: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%grid2 {
+    align-items: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid3 {
+    align-items: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%grid3 {
+    align-items: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid4 {
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%grid4 {
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid5 {
+    align-items: center;
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%grid5 {
+    align-items: center;
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid6 {
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+%grid6 {
+    justify-content: center;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid7 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+%grid7 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.grid8 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+%grid8 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.grid9 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+%grid9 {
+    justify-content: flex-end;
+    display: -webkit-flex;
+    align-items: flex-end;
+    flex-direction: column;
+}

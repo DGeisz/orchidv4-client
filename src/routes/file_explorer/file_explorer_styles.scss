@@ -1,0 +1,22 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+
+.file-explorer-page {
+    @extend %flexGrid1;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.new-page-button {
+    @extend %no-highlight;
+    @extend %grid5;
+    background-color: $sel-fg-bg-pink;
+    border: $sel-fg-pink 2px solid;
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: $sel-fg-pink;
+    font-weight: 500;
+    cursor: pointer;
+}
