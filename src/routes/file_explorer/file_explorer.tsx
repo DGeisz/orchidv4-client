@@ -22,6 +22,8 @@ const FileExplorer: React.FC = () => {
                 window.open(`page/${res.NewPage.page_id}`);
             }
         });
+
+        return () => kernel_link.set_handler(() => {});
     }, []);
 
     return (

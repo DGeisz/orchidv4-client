@@ -6,6 +6,7 @@ import { virtual_page } from "./virtual_page/virtual_page";
 import { PageSerialization } from "./serialization/page_serialization";
 import { PropagateLoader } from "react-spinners";
 import { palette } from "../../global_styles/palette";
+import FeatureSocket from "./building_blocks/feature_socket/feature_socket";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
@@ -28,11 +29,23 @@ const Page: React.FC = () => {
 
                 set_page_serialization(page_ser);
             });
+
+            /*
+             * Finally, send a response out requesting
+             * the full page
+             */
+            kernel_link.full_page(page_id);
         }
     }, [page_id]);
 
     if (!!page_serialization) {
-        return <div />;
+        return (
+            <div className="page-container">
+                <FeatureSocket
+                    serialization={page_serialization.feature_tree}
+                />
+            </div>
+        );
     } else {
         return (
             <div className="loading-page-container">

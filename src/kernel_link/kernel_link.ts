@@ -1,10 +1,12 @@
 import { WsResponse } from "./ws_response";
-import { NewPage } from "./ws_commands";
+import { FullPageCommand, NewPage } from "./ws_commands";
 
 class KernelLink {
     private readonly addr: string;
     private ws: WebSocket;
+    private ws_open: boolean = false;
     private response_handler?: (res: WsResponse) => void;
+    private send_queue: string[] = [];
 
     constructor(addr?: string) {
         if (!!addr) {
@@ -34,8 +36,22 @@ class KernelLink {
         };
 
         this.ws.onclose = () => {
+            this.ws_open = false;
+
             // Attempt to reconnect every 3 seconds
             setTimeout(this.reconnect_ws, 3000);
+        };
+
+        this.ws.onopen = () => {
+            this.ws_open = true;
+
+            console.log("This is send queue", this.send_queue);
+
+            for (let msg of this.send_queue) {
+                this.ws.send(msg);
+            }
+
+            this.send_queue = [];
         };
 
         /*
@@ -63,12 +79,30 @@ class KernelLink {
         this.configure_ws();
     };
 
+    send_message = (msg: string) => {
+        if (this.ws_open) {
+            this.ws.send(msg);
+        } else {
+            this.send_queue.push(msg);
+        }
+    };
+
     /*
      * The following methods are direct
      * requests to be sent to the server
      */
     new_page = () => {
-        this.ws.send(JSON.stringify(NewPage));
+        this.send_message(JSON.stringify(NewPage));
+    };
+
+    full_page = (page_id: string) => {
+        const cmd: FullPageCommand = {
+            FullPage: {
+                page_id,
+            },
+        };
+
+        this.send_message(JSON.stringify(cmd));
     };
 }
 

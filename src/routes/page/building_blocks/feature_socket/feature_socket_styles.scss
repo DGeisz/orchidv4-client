@@ -1,0 +1,86 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+
+.empty-feature-socket-container {
+    @extend %flexGrid1;
+    flex-direction: row;
+    margin: 5px 10px;
+    border: 2px solid $softGray;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.toggle-container {}
+
+.toggle-button {
+    @extend %smooth-transition;
+    background-color: $softGray;
+    padding: 2px 10px;
+    border-radius: 5px;
+}
+
+.toggle-button:hover {
+    background-color: $semiSoftGray;
+}
+
+.toggle-button:active {
+    background-color: $lightGray;
+}
+
+.toggle-button-icon {
+    color: $hardGray;
+    transform: translateY(-2px);
+}
+
+.all-buttons-container {
+    margin-left: 20px;
+}
+
+.button-family-container {}
+
+.button-family-title {
+    font-weight: bold;
+    color: $lightGray;
+    margin-left: 10px;
+}
+
+.button-family-buttons {
+    @extend %flexGrid1;
+    flex-direction: row;
+}
+
+.feature-button {
+    @extend %smooth-transition;
+    font-weight: bold;
+    font-size: 15pt;
+    padding: 0 10px;
+    border-radius: 5px;
+}
+
+.uni-button {
+    @extend .feature-button;
+    color: $uni-form-red;
+}
+
+.uni-button:hover {
+    background-color: $uni-form-red-hover;
+}
+
+.uni-button:active {
+    background-color: $uni-form-red-active;
+}
+
+.exi-button {
+    @extend .feature-button;
+    color: $exi-form-blue;
+}
+
+.exi-button:hover {
+    background-color: $exi-form-blue-hover;
+}
+
+.exi-button:active {
+    background-color: $exi-form-blue-active;
+}
+
