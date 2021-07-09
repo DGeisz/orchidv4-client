@@ -1,0 +1,12 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+
+.loading-page-container {
+    @extend %flexGrid5;
+    height: 100vh;
+}
+
+.loader {
+    background-color: $comp-fg-green;
+}
