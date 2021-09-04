@@ -1,0 +1,31 @@
+@import "./node_modules/bootstrap/scss/bootstrap";
+
+.term-hint-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.term-hint {
+    z-index: 100;
+    font-size: 9pt;
+    border-radius: 2px;
+    background-color: palegreen;
+    padding: 3px;
+    height: 17px;
+    font-family: $font-family-sans-serif;
+    font-weight: bold;
+    //color: $yiq-text-dark;
+    box-shadow: grey 0 3px 6px;
+    opacity: 90%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

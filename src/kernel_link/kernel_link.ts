@@ -16,7 +16,7 @@ class KernelLink {
         }
 
         this.ws = new WebSocket(this.addr);
-        console.log("Just initilized!");
+        // console.log("Just initilized!");
         this.configure_ws();
     }
 
@@ -25,8 +25,11 @@ class KernelLink {
         this.ws.onmessage = null;
         this.ws.onclose = null;
 
-        console.log("reconnecting");
-        this.ws = new WebSocket(this.addr);
+        /*
+        TODO: Turn this back on when you're actually using ws
+        */
+        // console.log("reconnecting");
+        // this.ws = new WebSocket(this.addr);
         this.configure_ws();
     };
 

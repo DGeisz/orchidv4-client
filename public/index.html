@@ -24,7 +24,38 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <script>
+      mathjaxLoaded = false;
+
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        chtml: {
+          displayAlign: "left",
+        },
+        options: {
+          enableMenu: false,
+        },
+        startup: {
+          ready: () => {
+            window.mathjaxLoaded = true;
+            MathJax.startup.defaultReady();
+          },
+        },
+      };
+    </script>
+    <script
+        id="MathJax-script"
+        async
+        src="%PUBLIC_URL%/mathjax/es5/tex-chtml-full.js"
+    ></script>
+    <title>Orchid</title>
+    <style>
+        mjx-container[display="true"] {
+            margin: 0 0 ! important
+        }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
