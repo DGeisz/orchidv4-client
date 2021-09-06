@@ -1,42 +1,21 @@
-import { VirtualFeatureSocket } from "./virtual_feature_socket/virtual_feature_socket";
-import {
-    isFullPageResponse,
-    WsResponse,
-} from "../../../kernel_link/ws_response";
-import { PageSerialization } from "../serialization/page_serialization";
+/**
+ * The virtual page intakes commands from the kernel link
+ * and uses these commands to assemble a "editor representation"
+ * of the page.  Namely, an unfinished command can be stored
+ * in the virtual page prior to being committed to the kernel
+ * for type checking.  The virtual page then sends a processed
+ * view skeleton of the page to the react component tree for
+ * final processing
+ */
+import { WsResponse } from "../../../kernel_link/ws_response";
+import { ViewSkeleton } from "../view_skeleton/view_skeleton";
 
-export class VirtualPage {
-    private page_id?: string;
-    private virtual_feature_socket?: VirtualFeatureSocket;
+class VirtualPage {
+    process_response = (res: WsResponse) => {};
+    get_view_skeleton = () => {
+        const a: ViewSkeleton = {};
 
-    handle_ws_response: (res: WsResponse) => PageSerialization | null = (
-        res: WsResponse
-    ) => {
-        /*
-         * Handle full page responses
-         */
-        if (isFullPageResponse(res)) {
-            const { page } = res.FullPage;
-
-            if (this.page_id === page.page_id) {
-                this.virtual_feature_socket = new VirtualFeatureSocket(
-                    page.feature_tree
-                );
-            }
-        }
-
-        if (!!this.virtual_feature_socket && !!this.page_id) {
-            return {
-                page_id: this.page_id,
-                feature_tree: this.virtual_feature_socket.serialize(),
-            };
-        } else {
-            return null;
-        }
-    };
-
-    set_page_id = (page_id: string) => {
-        this.page_id = page_id;
+        return a;
     };
 }
 

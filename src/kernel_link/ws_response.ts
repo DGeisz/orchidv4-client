@@ -1,4 +1,4 @@
-import { PageSerialization } from "../routes/page/serialization/page_serialization";
+import { PageSerialization } from "../global_serde/page_serialization";
 
 export type WsResponse = NewPageResponse | FullPageResponse;
 
@@ -8,7 +8,8 @@ export type WsResponse = NewPageResponse | FullPageResponse;
  */
 export interface NewPageResponse {
     NewPage: {
-        page_id: string;
+        target_client: string;
+        new_page: PageSerialization;
     };
 }
 

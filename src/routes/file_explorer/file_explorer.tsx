@@ -12,6 +12,7 @@ import {
 const FileExplorer: React.FC = () => {
     useEffect(() => {
         kernel_link.set_handler((res) => {
+            console.log("Got res on client");
             /*
              * If the response is a new page response
              * we want to open a new tab with that id
@@ -19,7 +20,17 @@ const FileExplorer: React.FC = () => {
             if (isNewPageResponse(res)) {
                 res = res as NewPageResponse;
 
-                window.open(`page/${res.NewPage.page_id}`);
+                console.log("Made sure it's actually new page", res);
+
+                /*
+                 * Now make sure we're the actual client that requested this one.
+                 * Otherwise, all the file explorer clients would open the new page
+                 */
+                if (res.NewPage.target_client === kernel_link.get_link_id()) {
+                    /*
+                     * */
+                    window.open(`page/${res.NewPage.new_page.id}`);
+                }
             }
         });
 

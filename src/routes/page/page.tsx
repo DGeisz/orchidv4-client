@@ -2,50 +2,34 @@ import React, { useEffect, useState } from "react";
 import "./page_styles.scss";
 import { useParams } from "react-router-dom";
 import { kernel_link } from "../../kernel_link/kernel_link";
-import { virtual_page } from "./virtual_page/virtual_page";
-import { PageSerialization } from "./serialization/page_serialization";
 import { PropagateLoader } from "react-spinners";
 import { palette } from "../../global_styles/palette";
-import FeatureSocket from "./building_blocks/feature_socket/feature_socket";
+import { virtual_page } from "./virtual_page/virtual_page";
+import { ViewSkeleton } from "./view_skeleton/view_skeleton";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
 
-    const [page_serialization, set_page_serialization] =
-        useState<PageSerialization | null>(null);
+    const pid = !!page_id ? page_id.toString() : "";
+
+    const [view_skeleton, set_view_skeleton] = useState<null | ViewSkeleton>(
+        null
+    );
 
     useEffect(() => {
-        if (!!page_id) {
-            virtual_page.set_page_id(page_id);
+        kernel_link.set_handler((res) => {
+            virtual_page.process_response(res);
 
-            /*
-             * This handler sends the ws response
-             * to the virtual page, and then uses
-             * the page serialization from the virtual page
-             * to update this react page's state
-             */
-            kernel_link.set_handler((res) => {
-                const page_ser = virtual_page.handle_ws_response(res);
+            set_view_skeleton(virtual_page.get_view_skeleton());
+        });
 
-                set_page_serialization(page_ser);
-            });
+        kernel_link.full_page(pid);
 
-            /*
-             * Finally, send a response out requesting
-             * the full page
-             */
-            kernel_link.full_page(page_id);
-        }
-    }, [page_id]);
+        return () => kernel_link.set_handler(() => {});
+    }, [pid]);
 
-    if (!!page_serialization) {
-        return (
-            <div className="page-container">
-                <FeatureSocket
-                    serialization={page_serialization.feature_tree}
-                />
-            </div>
-        );
+    if (!!view_skeleton) {
+        return <div />;
     } else {
         return (
             <div className="loading-page-container">

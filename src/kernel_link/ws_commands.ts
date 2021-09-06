@@ -1,7 +1,11 @@
 /*
  * New page command
  */
-export const NewPage = "NewPage";
+export interface NewPageCommand {
+    NewPage: {
+        target_client: string;
+    };
+}
 
 export interface FullPageCommand {
     FullPage: {

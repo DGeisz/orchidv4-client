@@ -1,7 +1,9 @@
 import { WsResponse } from "./ws_response";
-import { FullPageCommand, NewPage } from "./ws_commands";
+import { FullPageCommand, NewPageCommand } from "./ws_commands";
+import { v4 } from "uuid";
 
 class KernelLink {
+    private link_id: string;
     private readonly addr: string;
     private ws: WebSocket;
     private ws_open: boolean = false;
@@ -9,6 +11,8 @@ class KernelLink {
     private send_queue: string[] = [];
 
     constructor(addr?: string) {
+        this.link_id = v4();
+
         if (!!addr) {
             this.addr = addr;
         } else {
@@ -16,7 +20,7 @@ class KernelLink {
         }
 
         this.ws = new WebSocket(this.addr);
-        // console.log("Just initilized!");
+        console.log("Just initilized!");
         this.configure_ws();
     }
 
@@ -25,11 +29,8 @@ class KernelLink {
         this.ws.onmessage = null;
         this.ws.onclose = null;
 
-        /*
-        TODO: Turn this back on when you're actually using ws
-        */
-        // console.log("reconnecting");
-        // this.ws = new WebSocket(this.addr);
+        console.log("reconnecting");
+        this.ws = new WebSocket(this.addr);
         this.configure_ws();
     };
 
@@ -95,7 +96,13 @@ class KernelLink {
      * requests to be sent to the server
      */
     new_page = () => {
-        this.send_message(JSON.stringify(NewPage));
+        const cmd: NewPageCommand = {
+            NewPage: {
+                target_client: this.link_id,
+            },
+        };
+
+        this.send_message(JSON.stringify(cmd));
     };
 
     full_page = (page_id: string) => {
@@ -106,6 +113,10 @@ class KernelLink {
         };
 
         this.send_message(JSON.stringify(cmd));
+    };
+
+    get_link_id = () => {
+        return this.link_id;
     };
 }
 
