@@ -16,6 +16,6 @@ export function is_const(dec_ser: DecSer): dec_ser is Const {
     return dec_ser.hasOwnProperty("Const");
 }
 
-export function is_dec(dec_ser: DecSer): dec_ser is Def {
+export function is_def(dec_ser: DecSer): dec_ser is Def {
     return dec_ser.hasOwnProperty("Def");
 }

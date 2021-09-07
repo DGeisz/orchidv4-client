@@ -1,24 +1,38 @@
-import React, { useState } from "react";
-import { DecSocketSk } from "../../../page_skeleton/lexicon_sk/declaration_sk/dec_socket_sk";
+import React, { useEffect, useState } from "react";
 import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
+import {
+    DecSocketSer,
+    is_const,
+    is_def,
+} from "../../../../../global_serde/lexicon/declaration/dec_serialization";
+import { is_some } from "../../../../../global_serde/utils/rust_option";
 
 interface Props {
-    skeleton: DecSocketSk;
+    socket: DecSocketSer;
 }
 
 const DecSocket: React.FC<Props> = (props) => {
-    const [cmd, set_cmd] = useState<string>("asdfa");
+    const [cmd, set_cmd] = useState<string>("asdf");
+
+    useEffect(() => {
+        document.addEventListener("keypress", (e) => {
+            set_cmd((cmd) => cmd + e.key);
+        });
+    }, []);
 
     /*
      * First, if the socket is actually filled in
      * then we automatically render the appropriate
      * component
      */
-    switch (props.skeleton.declaration.tag) {
-        case "const":
+    if (is_some(props.socket.dec_ser)) {
+        const { Some: dec_some } = props.socket.dec_ser;
+
+        if (is_const(dec_some)) {
             return <div />;
-        case "def":
+        } else if (is_def(dec_some)) {
             return <div />;
+        }
     }
 
     /*
