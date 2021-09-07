@@ -13,7 +13,7 @@ export interface NewPageResponse {
     };
 }
 
-export function isNewPageResponse(res: WsResponse): res is NewPageResponse {
+export function is_new_page(res: WsResponse): res is NewPageResponse {
     return res.hasOwnProperty("NewPage");
 }
 
@@ -27,6 +27,6 @@ export interface FullPageResponse {
     };
 }
 
-export function isFullPageResponse(res: WsResponse): res is FullPageResponse {
+export function is_full_page(res: WsResponse): res is FullPageResponse {
     return res.hasOwnProperty("FullPage");
 }

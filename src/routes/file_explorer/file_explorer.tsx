@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import "./file_explorer_styles.scss";
 import { kernel_link } from "../../kernel_link/kernel_link";
-import {
-    isNewPageResponse,
-    NewPageResponse,
-} from "../../kernel_link/ws_response";
+import { is_new_page, NewPageResponse } from "../../kernel_link/ws_response";
 
 /*
  * Initialize the kernel link
@@ -17,7 +14,7 @@ const FileExplorer: React.FC = () => {
              * If the response is a new page response
              * we want to open a new tab with that id
              */
-            if (isNewPageResponse(res)) {
+            if (is_new_page(res)) {
                 res = res as NewPageResponse;
 
                 console.log("Made sure it's actually new page", res);
