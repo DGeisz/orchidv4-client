@@ -8,8 +8,8 @@ const HOVER_COLOR = "#8fcad9";
 interface Props {
     tex: string;
     termIds: string[];
-    selectTerm: (id: string) => void;
-    showTermHints: boolean;
+    selectTerm?: (id: string) => void;
+    showTermHints?: boolean;
 }
 
 const MathJaxElement: React.FC<Props> = (props) => {
@@ -26,7 +26,8 @@ const MathJaxElement: React.FC<Props> = (props) => {
                 jax_node.style.cursor = "pointer";
                 jax_node.style.position = "relative";
 
-                jax_node.onmousedown = () => props.selectTerm(id);
+                jax_node.onmousedown = () =>
+                    !!props.selectTerm && props.selectTerm(id);
 
                 jax_node.onmouseover = () => {
                     if (!!jax_node) {
@@ -46,7 +47,7 @@ const MathJaxElement: React.FC<Props> = (props) => {
     useEffect(() => {
         termHints.forEach((hint) => hint.remove());
 
-        if (props.showTermHints) {
+        if (!!props.showTermHints) {
             const hints = hint_strings(props.termIds.length);
             const newTermHints: HTMLDivElement[] = [];
 

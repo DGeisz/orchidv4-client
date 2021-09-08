@@ -66,8 +66,8 @@ export const example_reduced_forms: ReducedFormType[] = [
     {
         title: "Axiom",
         title_color: palette.uni_form_red,
-        main_tex: "\\frac{\\alpha}{\\beta}",
-        label: "\\beta",
+        main_tex: "\\alpha \\Rightarrow \\beta",
+        label: "b",
         pg_index: "1.01",
         children: [],
     },
@@ -75,11 +75,15 @@ export const example_reduced_forms: ReducedFormType[] = [
         title: "Theorem",
         title_color: palette.exi_form_blue,
         main_tex: "\\frac{\\zeta}{\\Omega}",
-        label: "\\beta",
+        label: "b",
         pg_index: "1.02",
-        children: [],
-    },
-    {
-        tex: `\\text{\\color{${palette.condi_form_salmon}}{constant} $\\zeta$ := $\\beta$}`,
+        children: [
+            {
+                tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+            },
+            {
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+        ],
     },
 ];

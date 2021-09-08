@@ -2,6 +2,16 @@
 @import "src/global_styles/basic_visual";
 @import "src/global_styles/basic_layout";
 
+@font-face {
+    font-family: JaxMain;
+    src: local("JaxMain"), url("fonts/MathJax_Main-Regular.woff");
+}
+
+div {
+    @extend %no-highlight;
+    font-family: JaxMain;
+}
+
 .loading-page-container {
     @extend %flexGrid5;
     height: 100vh;

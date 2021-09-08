@@ -1,0 +1,7 @@
+@import "src/global_styles/palette";
+
+%proof-border {
+    border-radius: 10px;
+    padding: 10px 10px;
+    border-left: solid 1px $semiSoftGray;
+}
