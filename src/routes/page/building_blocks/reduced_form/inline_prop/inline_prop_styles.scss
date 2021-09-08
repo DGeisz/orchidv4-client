@@ -1,0 +1,31 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+@import "../../../page_styles";
+
+.inline-container {
+    @extend %flexRow;
+}
+
+.inline-left {
+    @extend %flexRow;
+    flex: 1;
+}
+
+.inline-left-left {
+    @extend %flexGrid4;
+    padding: $form-vertical-margin 0;
+    margin: 0;
+    border-right: solid 1px $semiSoftGray;
+}
+
+.inline-left-right {
+    @extend %flexGrid4;
+    @extend %jax-main;
+    margin-left: 20px;
+}
+
+.inline-right {
+    @extend %flexRow;
+    align-items: center;
+}

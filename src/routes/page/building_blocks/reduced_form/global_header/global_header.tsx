@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./global_header_styles.scss";
-import { GlobalHeaderType } from "../../reduced_form/reduced_form";
-import MathJaxElement from "../../../../global_building_blocks/mathjax_element/mathjax_element";
-import ReducedForm from "../reduced_form/reduced_form";
+import "../../../page_styles.scss";
+import { GlobalHeaderType } from "../../../reduced_form/reduced_form";
+import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
+import ReducedForm from "../reduced_form";
 
 interface Props {
     global_header: GlobalHeaderType;
@@ -11,7 +12,7 @@ interface Props {
 const GlobalHeader: React.FC<Props> = (props) => {
     const { global_header } = props;
 
-    const [show_proof, set_proof_visible] = useState<boolean>(false);
+    const [show_proof, set_proof_visible] = useState<boolean>(true);
 
     return (
         <div className="gh-container">
@@ -30,8 +31,8 @@ const GlobalHeader: React.FC<Props> = (props) => {
                         />
                     </div>
                     <div className="gh-content-right">
-                        <div className="gh-label">{global_header.label}</div>
-                        <div className="gh-index">
+                        <div className="pg-label">{global_header.label}</div>
+                        <div className="pg-index">
                             ({global_header.pg_index})
                         </div>
                     </div>

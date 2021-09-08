@@ -7,10 +7,20 @@
     src: local("JaxMain"), url("fonts/MathJax_Main-Regular.woff");
 }
 
-div {
+%jax-main {
     @extend %no-highlight;
     font-family: JaxMain;
 }
+
+%proof-border {
+    border-radius: 10px;
+    padding: 10px 10px;
+    border-left: solid 1px $semiSoftGray;
+}
+
+$tex-size: 13pt;
+$pg-indent: 20px;
+$form-vertical-margin: 15px;
 
 .loading-page-container {
     @extend %flexGrid5;
@@ -25,4 +35,39 @@ div {
     height: 100%;
     width: 100%;
     padding: 20px;
+}
+
+.pg-label {
+    @extend %jax-main;
+    margin-right: 15px;
+}
+
+.pg-index {
+    @extend %jax-main;
+    font-size: 14pt;
+}
+
+.proof-text {
+    @extend %jax-main;
+    font-size: 10pt;
+    line-height: 5px;
+    padding-top: 10px;
+}
+
+.show-button {
+    @extend .proof-text;
+    color: $edit-blue;
+    cursor: pointer;
+}
+
+.hide-button {
+    @extend .proof-text;
+    @extend %smooth-transition;
+    color: $edit-blue;
+    cursor: pointer;
+    opacity: 20%;
+}
+
+.hide-button:hover {
+    opacity: 100%;
 }

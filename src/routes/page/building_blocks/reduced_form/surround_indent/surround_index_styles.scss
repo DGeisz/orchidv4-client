@@ -1,0 +1,44 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+@import "../../../page_styles";
+
+
+.si-container {
+    @extend %proof-border;
+    margin: $form-vertical-margin 0;
+}
+
+.si-header {
+    @extend %flexRow;
+}
+
+.si-header-left {
+    font-size: $tex-size;
+}
+
+.si-header-right {
+    margin-left: 15px;
+}
+
+.si-body {
+    margin: 10px 0 10px $pg-indent;
+}
+
+.children-container {
+    margin: 10px 0;
+}
+
+.si-footer {
+    @extend %flexRow;
+    font-size: $tex-size;
+}
+
+.si-footer-left {
+    flex: 1;
+}
+
+.si-footer-right {
+    @extend %flexRow;
+    align-items: flex-end;
+}

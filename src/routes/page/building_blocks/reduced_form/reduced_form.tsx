@@ -7,11 +7,11 @@ import {
     is_tex_line,
     ReducedFormType,
 } from "../../reduced_form/reduced_form";
-import TexLine from "../tex_line/tex_line";
-import GlobalHeader from "../global_header/global_header";
-import SurroundIndent from "../surround_indent/surround_index";
-import InlineProp from "../inline_prop/inline_prop";
-import LambdaProp from "../lambda_prop/lambda_prop";
+import TexLine from "./tex_line/tex_line";
+import GlobalHeader from "./global_header/global_header";
+import SurroundIndent from "./surround_indent/surround_index";
+import InlineProp from "./inline_prop/inline_prop";
+import LambdaProp from "./lambda_prop/lambda_prop";
 
 interface Props {
     form: ReducedFormType;

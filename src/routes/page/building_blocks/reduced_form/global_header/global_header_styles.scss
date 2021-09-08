@@ -1,17 +1,18 @@
 @import "src/global_styles/palette";
 @import "src/global_styles/basic_visual";
 @import "src/global_styles/basic_layout";
-@import "../proof_block/proof_block";
+@import "../../../page_styles";
 
 .gh-container {
     @extend %proof-border;
-    margin-bottom: 20px;
+    margin: $form-vertical-margin 0;
 }
 
 .gh-header {
 }
 
 .gh-title {
+    @extend %jax-main;
     font-size: 15pt;
 }
 
@@ -22,21 +23,13 @@
 
 .gh-content-left {
     @extend %flexGrid1;
-    font-size: 13pt;
+    font-size: $tex-size;
 }
 
 .gh-content-right {
     @extend %flexRow;
     align-items: flex-end;
     line-height: 5px;
-}
-
-.gh-label {
-    margin-right: 15px;
-}
-
-.gh-index {
-    font-size: 14pt;
 }
 
 .proof-container {
@@ -50,28 +43,12 @@
 }
 
 .proof-text {
+    @extend %jax-main;
     font-size: 10pt;
     line-height: 5px;
     padding-top: 10px;
 }
 
-.show-button {
-    @extend .proof-text;
-    color: $edit-blue;
-    cursor: pointer;
-}
-
-.hide-button {
-    @extend .proof-text;
-    @extend %smooth-transition;
-    color: $edit-blue;
-    cursor: pointer;
-    opacity: 20%;
-}
-
-.hide-button:hover {
-    opacity: 100%;
-}
 
 .gh-proof-title {
     @extend .proof-text;

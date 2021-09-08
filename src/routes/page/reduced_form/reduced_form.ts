@@ -27,6 +27,9 @@ export interface SurroundIndentType {
     header_tex: string;
     children: ReducedFormType[];
     footer_tex: string;
+    body_name: string;
+    label?: string;
+    pg_index?: string;
 }
 
 export function is_surround_indent(
@@ -48,6 +51,8 @@ export function is_inline_prop(form: ReducedFormType): form is InlinePropType {
 
 export interface LambdaPropType {
     intro_tex: string;
+    label: string;
+    pg_index: string;
     children: ReducedFormType[];
 }
 
@@ -85,5 +90,69 @@ export const example_reduced_forms: ReducedFormType[] = [
                 tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
             },
         ],
+    },
+    {
+        header_tex: "\\vdash \\; p \\wedge q \\Rightarrow p",
+        body_name: "proof",
+        children: [
+            {
+                intro_tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                label: "t",
+                pg_index: "3.01",
+                children: [
+                    {
+                        tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                    },
+                    {
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                        explanation: "Use butt with other butt",
+                        label: "r",
+                        pg_index: "1.14",
+                    },
+                    {
+                        prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
+                        explanation: "Use butt with other butt",
+                        label: "r",
+                        pg_index: "1.14",
+                    },
+                ],
+            },
+            {
+                tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+            },
+            {
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                explanation: "Use butt with other butt",
+                label: "r",
+                pg_index: "1.14",
+            },
+            {
+                prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
+                explanation: "Use butt with other butt",
+                label: "r",
+                pg_index: "1.14",
+            },
+        ],
+        footer_tex: "\\therefore \\; p \\wedge q \\Rightarrow p",
+        label: "b",
+        pg_index: "1.02",
     },
 ];

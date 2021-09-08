@@ -1,0 +1,28 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+@import "../../../page_styles";
+
+.lambda-container {
+    margin: $pg-indent 0;
+}
+
+.lam-header-container {
+    @extend %flexRow;
+    padding-bottom: 10px;
+    border-bottom: solid 1px $semiSoftGray;
+}
+
+.lam-header-left {
+    @extend %flexGrid4;
+}
+
+.lam-header-right {
+    @extend %flexRow;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.lam-children-container {
+}
