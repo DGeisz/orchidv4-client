@@ -5,31 +5,25 @@ import { kernel_link } from "../../kernel_link/kernel_link";
 import { PropagateLoader } from "react-spinners";
 import { palette } from "../../global_styles/palette";
 import { virtual_page } from "./virtual_page/virtual_page";
-import DecSocket from "./building_blocks/lexicon_blocks/declaration/dec_socket";
-import { PageSerialization } from "../../global_serde/page_serialization";
-import { is_full_page } from "../../kernel_link/ws_response";
 import {
-    useSocketMaster,
-    withSocketCmd,
-} from "./building_blocks/socket_control/socket_control";
+    example_reduced_forms,
+    ReducedFormType,
+} from "./reduced_form/reduced_form";
+import ReducedForm from "./building_blocks/reduced_form/reduced_form";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
     const pid = !!page_id ? page_id.toString() : "";
 
-    const [page_ser, set_page_ser] = useState<PageSerialization>();
-
-    const { socket_cursor, send_event_to_socket } = useSocketMaster();
+    const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>(
+        example_reduced_forms
+    );
 
     useEffect(() => {
         /*
          * Set the response handler first and foremost
          */
-        kernel_link.set_handler((res) => {
-            if (is_full_page(res)) {
-                set_page_ser(res.FullPage.page);
-            }
-        });
+        kernel_link.set_handler(virtual_page.process_response);
 
         /*
          * Then let the kernel know we want
@@ -42,12 +36,11 @@ const Page: React.FC = () => {
         };
     }, [pid]);
 
-    if (!!page_ser) {
-        console.log("Here's page serialization!");
+    if (!!reduced_forms) {
         return (
             <div className="page-container">
-                {page_ser.dec_sockets.map((socket) => (
-                    <DecSocket socket={socket} key={`dec:${socket.id}`} />
+                {reduced_forms.map((form) => (
+                    <ReducedForm form={form} />
                 ))}
             </div>
         );
