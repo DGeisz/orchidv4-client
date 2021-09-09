@@ -1,7 +1,7 @@
 import React from "react";
 import "./tex_line_styles.scss";
-import { TexLineType } from "../../../reduced_form/reduced_form";
 import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
+import { TexLineType } from "../../../page_types/reduced_form/reduced_form";
 
 interface Props {
     tex_line: TexLineType;

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import "./global_header_styles.scss";
 import "../../../page_styles.scss";
-import { GlobalHeaderType } from "../../../reduced_form/reduced_form";
 import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import ReducedForm from "../reduced_form";
+import { GlobalHeaderType } from "../../../page_types/reduced_form/reduced_form";
 
 interface Props {
     global_header: GlobalHeaderType;

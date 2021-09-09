@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./surround_index_styles.scss";
-import { SurroundIndentType } from "../../../reduced_form/reduced_form";
 import ReducedForm from "../reduced_form";
 import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
+import { SurroundIndentType } from "../../../page_types/reduced_form/reduced_form";
 
 interface Props {
     surround_indent: SurroundIndentType;

@@ -1,4 +1,4 @@
-import { PageSerialization } from "../global_serde/page_serialization";
+import { PageSerialization } from "../routes/page/page_types/page_serde/page_serialization";
 
 export type WsResponse = NewPageResponse | FullPageResponse;
 

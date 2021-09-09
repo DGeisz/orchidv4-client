@@ -1,5 +1,5 @@
-import { ReducedFormType } from "../../reduced_form/reduced_form";
 import { VSocket } from "./v_socket";
+import { ReducedFormType } from "../../page_types/reduced_form/reduced_form";
 
 export interface VLex {
     get_reduced_form: (

@@ -1,7 +1,7 @@
 import { is_full_page, WsResponse } from "../../../kernel_link/ws_response";
 import { VDecSocket } from "./v_lexicon/v_declaration/v_dec_socket";
-import { ReducedFormType } from "../reduced_form/reduced_form";
 import { cursor_success, VSocket } from "./v_lexicon/v_socket";
+import { ReducedFormType } from "../page_types/reduced_form/reduced_form";
 
 export const CURSOR_NAME = "cursor";
 export const CURSOR_LATEX: string =

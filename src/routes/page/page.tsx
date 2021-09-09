@@ -5,13 +5,9 @@ import { kernel_link } from "../../kernel_link/kernel_link";
 import { PropagateLoader } from "react-spinners";
 import { palette } from "../../global_styles/palette";
 import { VirtualPage } from "./virtual_page/virtual_page";
-import {
-    example_reduced_forms,
-    ReducedFormType,
-} from "./reduced_form/reduced_form";
 import ReducedForm from "./building_blocks/reduced_form/reduced_form";
 import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_mode_switch";
-import { enable, disable } from "darkreader";
+import { ReducedFormType } from "./page_types/reduced_form/reduced_form";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
@@ -19,9 +15,7 @@ const Page: React.FC = () => {
 
     const [jax_loaded, set_jax_loaded] = useState<boolean>(false);
 
-    const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>(
-        example_reduced_forms
-    );
+    const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>();
 
     useEffect(() => {
         const jax_interval = setInterval(() => {

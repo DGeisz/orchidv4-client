@@ -1,13 +1,17 @@
-import {
-    DecSocketSer,
-    is_const,
-} from "../../../../../global_serde/lexicon/declaration/dec_serialization";
 import { VDeclaration } from "./v_declaration";
 import { VConstant } from "./v_constant/v_constant";
 import { VDefinition } from "./v_definition/v_definition";
-import { is_some } from "../../../../../global_serde/utils/rust_option";
 import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
 import { CURSOR_LATEX } from "../../virtual_page";
+import { is_some } from "../../../page_types/page_serde/utils/rust_option";
+import {
+    DecSocketSer,
+    is_const,
+} from "../../../page_types/page_serde/lexicon/declaration/dec_serialization";
+import {
+    ReducedFormTag,
+    ReducedFormType,
+} from "../../../page_types/reduced_form/reduced_form";
 
 export class VDecSocket implements VSocket {
     private declaration?: VDeclaration;
@@ -38,9 +42,12 @@ export class VDecSocket implements VSocket {
         }
     }
 
-    get_reduced_form = (cursor_socket_id: string) => {
+    get_reduced_form: (cursor_socket_id: string) => ReducedFormType = (
+        cursor_socket_id: string
+    ) => {
         if (cursor_socket_id === this.id) {
             return {
+                tag: ReducedFormTag.TexLine,
                 tex: `\\text{${this.left_entry_value.slice(
                     0,
                     this.cursor_position
@@ -50,6 +57,7 @@ export class VDecSocket implements VSocket {
             };
         } else {
             return {
+                tag: ReducedFormTag.TexLine,
                 tex: `\\text{${
                     !!this.left_entry_value ? this.left_entry_value : "□"
                 }}`,

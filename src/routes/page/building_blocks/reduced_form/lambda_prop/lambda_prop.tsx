@@ -1,8 +1,8 @@
 import React from "react";
 import "./lambda_prop_styles.scss";
-import { LambdaPropType } from "../../../reduced_form/reduced_form";
 import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import ReducedForm from "../reduced_form";
+import { LambdaPropType } from "../../../page_types/reduced_form/reduced_form";
 
 interface Props {
     lambda_prop: LambdaPropType;
