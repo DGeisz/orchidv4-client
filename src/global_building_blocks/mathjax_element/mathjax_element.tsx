@@ -65,8 +65,6 @@ const MathJaxElement: React.FC<Props> = (props) => {
         }
     }, [props.showTermHints, props.tex, props.termIds]);
 
-    console.log("Rendering math!");
-
     return (
         <div dangerouslySetInnerHTML={{ __html: convert_latex(props.tex) }} />
     );

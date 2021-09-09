@@ -22,6 +22,11 @@ $tex-size: 13pt;
 $pg-indent: 20px;
 $form-vertical-margin: 15px;
 
+#cursor {
+    width: 0;
+    transform: translateX(-2px) translateY(-1px) scaleY(1.1);
+}
+
 .loading-page-container {
     @extend %flexGrid5;
     height: 100vh;
@@ -34,7 +39,19 @@ $form-vertical-margin: 15px;
 .page-container {
     height: 100%;
     width: 100%;
-    padding: 20px;
+    padding: 10px 20px;
+}
+
+.page-header {
+    @extend %flexRow;
+}
+
+.page-header-left {
+    @extend %flexGrid4;
+}
+
+.page-header-right {
+    @extend %flexGrid6;
 }
 
 .pg-label {

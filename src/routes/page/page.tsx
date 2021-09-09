@@ -4,43 +4,65 @@ import { useParams } from "react-router-dom";
 import { kernel_link } from "../../kernel_link/kernel_link";
 import { PropagateLoader } from "react-spinners";
 import { palette } from "../../global_styles/palette";
-import { virtual_page } from "./virtual_page/virtual_page";
+import { VirtualPage } from "./virtual_page/virtual_page";
 import {
     example_reduced_forms,
     ReducedFormType,
 } from "./reduced_form/reduced_form";
 import ReducedForm from "./building_blocks/reduced_form/reduced_form";
+import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_mode_switch";
+import { enable, disable } from "darkreader";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
     const pid = !!page_id ? page_id.toString() : "";
+
+    const [jax_loaded, set_jax_loaded] = useState<boolean>(false);
 
     const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>(
         example_reduced_forms
     );
 
     useEffect(() => {
-        /*
-         * Set the response handler first and foremost
-         */
-        kernel_link.set_handler(virtual_page.process_response);
+        const jax_interval = setInterval(() => {
+            if (!!window.MathJax) {
+                set_jax_loaded(true);
+                clearInterval(jax_interval);
+            }
+        }, 100);
+    }, []);
 
-        /*
-         * Then let the kernel know we want
-         * a full page serialization
-         */
-        kernel_link.full_page(pid);
+    useEffect(() => {
+        if (!!pid) {
+            const virtual_page = new VirtualPage(pid, set_reduced_forms);
 
-        return () => {
-            kernel_link.set_handler(() => {});
-        };
+            /*
+             * Set the response handler first and foremost
+             */
+            kernel_link.set_handler(virtual_page.process_response);
+
+            /*
+             * Then let the kernel know we want
+             * a full page serialization
+             */
+            kernel_link.full_page(pid);
+
+            return () => {
+                kernel_link.set_handler(() => {});
+            };
+        }
     }, [pid]);
 
-    if (!!reduced_forms) {
+    if (!!reduced_forms && jax_loaded) {
         return (
             <div className="page-container">
-                {reduced_forms.map((form) => (
-                    <ReducedForm form={form} />
+                <div className="page-header">
+                    <div className="page-header-right">
+                        <DarkModeSwitch />
+                    </div>
+                </div>
+                {reduced_forms.map((form, index) => (
+                    <ReducedForm form={form} key={`${pid}:${index}`} />
                 ))}
             </div>
         );

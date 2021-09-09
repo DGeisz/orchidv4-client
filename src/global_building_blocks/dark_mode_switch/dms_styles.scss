@@ -1,0 +1,50 @@
+@import "src/global_styles/palette";
+@import "src/global_styles/basic_visual";
+@import "src/global_styles/basic_layout";
+
+$slider-size: 22px;
+$w-mul: 1.1;
+
+$buffer: 2px;
+
+.slider-container {
+    z-index: 0;
+    position: relative;
+    display: flex;
+    height: $slider-size + (2 * $buffer);
+    width: (1 + $w-mul) * $slider-size + (2 * $buffer);
+    background-color: $lightGray;
+    border-radius: 2 * $slider-size;
+    cursor: pointer;
+}
+
+.slider-abs-container {
+    z-index: 10;
+    @extend %flexRow;
+    position: absolute;
+    left: $buffer;
+    right: $buffer;
+    top: 0;
+    bottom: 0;
+}
+
+.emoji-container {
+    @extend %flexGrid5;
+    @extend %no-highlight;
+    margin-bottom: 1px;
+    font-size: 10pt;
+}
+
+.slider {
+    @extend %smooth-transition;
+    z-index: 20;
+    margin: $buffer;
+    height: $slider-size;
+    width: $slider-size;
+    border-radius: $slider-size;
+    background-color: $white;
+}
+
+.slider-right {
+    transform: translateX($w-mul * $slider-size);
+}
