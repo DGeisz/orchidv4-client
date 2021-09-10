@@ -65,9 +65,6 @@ const TexElement: React.FC<Props> = (props) => {
         }
     }, [props.showTermHints, props.tex, props.termIds]);
 
-    // return (
-    //     <div dangerouslySetInnerHTML={{ __html: convert_latex(props.tex) }} />
-    // );
     return (
         <div
             className="tex-container-tex"
@@ -75,6 +72,7 @@ const TexElement: React.FC<Props> = (props) => {
                 __html: renderToString(props.tex, {
                     trust: true,
                     displayMode: true,
+                    output: "html",
                 }),
             }}
         />
