@@ -12,3 +12,11 @@ export interface FullPageCommand {
         page_id: string;
     };
 }
+
+export interface FillDecSocketCommand {
+    FillDecSocket: {
+        page_id: string;
+        socket_id: string;
+        dec_name: string;
+    };
+}

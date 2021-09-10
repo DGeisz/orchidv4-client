@@ -79,4 +79,10 @@ export const palette = {
     notDeepBlue: "#a1d9ed",
     deepBlue: "#32afdd",
     beneathTheWaves: "#283f52",
+
+    warning: "#e35b00",
+    warningLight: "#ffd7a8",
+    dangerLight: "#f2cbcf",
+    primary: "#007bff",
+    primaryLight: "#c4e1ff",
 };

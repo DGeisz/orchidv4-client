@@ -14,7 +14,6 @@ const Page: React.FC = () => {
     const pid = !!page_id ? page_id.toString() : "";
 
     const [jax_loaded, set_jax_loaded] = useState<boolean>(false);
-
     const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>();
 
     useEffect(() => {

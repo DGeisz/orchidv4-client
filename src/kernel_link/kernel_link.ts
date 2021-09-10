@@ -1,5 +1,9 @@
 import { WsResponse } from "./ws_response";
-import { FullPageCommand, NewPageCommand } from "./ws_commands";
+import {
+    FillDecSocketCommand,
+    FullPageCommand,
+    NewPageCommand,
+} from "./ws_commands";
 import { v4 } from "uuid";
 
 class KernelLink {
@@ -117,6 +121,22 @@ class KernelLink {
 
     get_link_id = () => {
         return this.link_id;
+    };
+
+    fill_dec_socket = (
+        page_id: string,
+        socket_id: string,
+        dec_name: string
+    ) => {
+        const cmd: FillDecSocketCommand = {
+            FillDecSocket: {
+                page_id,
+                socket_id,
+                dec_name,
+            },
+        };
+
+        this.send_message(JSON.stringify(cmd));
     };
 }
 

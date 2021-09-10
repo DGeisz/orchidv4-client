@@ -1,8 +1,5 @@
-type None = null;
-type Some<T> = { Some: T };
+export type Option<T> = null | T;
 
-export type Option<T> = None | Some<T>;
-
-export function is_some<T>(option: Option<T>): option is Some<T> {
+export function is_some<T>(option: Option<T>): option is T {
     return option !== null;
 }

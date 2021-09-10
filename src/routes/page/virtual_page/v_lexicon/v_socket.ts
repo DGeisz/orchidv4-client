@@ -43,4 +43,5 @@ export interface VSocket extends VLex {
     delete: () => void;
     move_cursor_next: () => CursorResponse;
     move_cursor_previous: () => CursorResponse;
+    commit_seq: (page_id: string) => void;
 }

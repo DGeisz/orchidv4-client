@@ -1,4 +1,8 @@
-import { is_full_page, WsResponse } from "../../../kernel_link/ws_response";
+import {
+    is_dec_socket_update,
+    is_full_page,
+    WsResponse,
+} from "../../../kernel_link/ws_response";
 import { VDecSocket } from "./v_lexicon/v_declaration/v_dec_socket";
 import { cursor_success, VSocket } from "./v_lexicon/v_socket";
 import { ReducedFormType } from "../page_types/reduced_form/reduced_form";
@@ -51,6 +55,8 @@ export class VirtualPage implements VSocket {
             this.cursor = this.dec_sockets[0].activate_left_cursor(true);
         }
 
+        console.log(res);
+
         if (is_full_page(res)) {
             const page = res.FullPage.page;
 
@@ -68,6 +74,20 @@ export class VirtualPage implements VSocket {
                         this.dec_sockets[0].activate_left_cursor(true);
                 }
 
+                this.process_change();
+            }
+        }
+
+        if (is_dec_socket_update(res)) {
+            const { page_id, dec_socket_ser } = res.DecSocketUpdate;
+
+            if (page_id === this.id) {
+                /* Find the socket in question */
+                const socket = this.dec_sockets.find(
+                    (socket) => socket.get_id() === dec_socket_ser.id
+                );
+
+                !!socket && socket.update(dec_socket_ser);
                 this.process_change();
             }
         }
@@ -133,6 +153,18 @@ export class VirtualPage implements VSocket {
                         this.cursor.move_cursor_next();
                         break;
                     }
+                    case "Enter": {
+                        this.cursor.commit_seq(this.id);
+                        break;
+                    }
+                    case "Tab": {
+                        this.cursor.commit_seq(this.id);
+                        break;
+                    }
+                    case " ": {
+                        this.cursor.commit_seq(this.id);
+                        break;
+                    }
                 }
             }
 
@@ -184,4 +216,5 @@ export class VirtualPage implements VSocket {
     move_cursor_previous = () => cursor_success();
 
     get_child_sockets = () => this.dec_sockets;
+    commit_seq = () => {};
 }

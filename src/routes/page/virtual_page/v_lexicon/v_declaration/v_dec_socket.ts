@@ -1,20 +1,28 @@
-import { VDeclaration } from "./v_declaration";
 import { VConstant } from "./v_constant/v_constant";
 import { VDefinition } from "./v_definition/v_definition";
 import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
-import { CURSOR_LATEX } from "../../virtual_page";
 import { is_some } from "../../../page_types/page_serde/utils/rust_option";
 import {
+    DecSer,
     DecSocketSer,
     is_const,
+    is_def,
 } from "../../../page_types/page_serde/lexicon/declaration/dec_serialization";
 import {
     ReducedFormTag,
     ReducedFormType,
 } from "../../../page_types/reduced_form/reduced_form";
+import { VLex } from "../v_lex";
+import { kernel_link } from "../../../../../kernel_link/kernel_link";
+import {
+    add_latex_color,
+    LATEX_SPACE,
+    text_with_cursor,
+} from "../../../utils/latex_utils";
+import { palette } from "../../../../../global_styles/palette";
 
 export class VDecSocket implements VSocket {
-    private declaration?: VDeclaration;
+    private declaration?: VLex;
     private readonly id: string;
     private readonly parent_socket: VSocket;
 
@@ -32,28 +40,91 @@ export class VDecSocket implements VSocket {
         this.parent_socket = parent_socket;
 
         if (is_some(dec_ser)) {
-            const { Some: dec_some } = dec_ser;
-
-            if (is_const(dec_some)) {
-                this.declaration = new VConstant(dec_some.Const);
+            if (is_const(dec_ser)) {
+                this.declaration = new VConstant(dec_ser.Const);
             } else {
-                this.declaration = new VDefinition(dec_some.Def);
+                this.declaration = new VDefinition(dec_ser.Def);
             }
         }
     }
 
+    update = (dec_socket_ser: DecSocketSer) => {
+        if (dec_socket_ser.id === this.id) {
+            if (is_some<DecSer>(dec_socket_ser.dec_ser)) {
+                const { dec_ser } = dec_socket_ser;
+
+                if (is_const(dec_ser)) {
+                    this.declaration = new VConstant(dec_ser.Const);
+                } else if (is_def(dec_ser)) {
+                    this.declaration = new VDefinition(dec_ser.Def);
+                }
+
+                this.left_entry_value = "";
+                this.right_entry_value = "";
+                this.cursor_position = 0;
+            }
+        }
+    };
+
     get_reduced_form: (cursor_socket_id: string) => ReducedFormType = (
         cursor_socket_id: string
     ) => {
-        if (cursor_socket_id === this.id) {
+        if (!!this.declaration) {
+            const child_form =
+                this.declaration.get_reduced_form(cursor_socket_id);
+
+            if (!Array.isArray(child_form)) {
+                if (cursor_socket_id === this.id) {
+                    switch (child_form.tag) {
+                        case ReducedFormTag.TexLine: {
+                            switch (this.cursor_side) {
+                                case CursorSide.Left:
+                                    return {
+                                        tag: ReducedFormTag.TexLine,
+                                        tex:
+                                            text_with_cursor(
+                                                this.left_entry_value,
+                                                this.cursor_position
+                                            ) +
+                                            LATEX_SPACE +
+                                            child_form.tex,
+                                    };
+                                case CursorSide.Right:
+                                    return {
+                                        tag: ReducedFormTag.TexLine,
+                                        tex:
+                                            child_form.tex +
+                                            LATEX_SPACE +
+                                            text_with_cursor(
+                                                this.right_entry_value,
+                                                this.cursor_position
+                                            ),
+                                    };
+                            }
+                            break;
+                        }
+                        default:
+                            return {
+                                tag: ReducedFormTag.TexLine,
+                                tex: add_latex_color("ERROR", palette.danger),
+                            };
+                    }
+                } else {
+                    return child_form;
+                }
+            } else {
+                return {
+                    tag: ReducedFormTag.TexLine,
+                    tex: add_latex_color("ERROR", palette.danger),
+                };
+            }
+        } else if (cursor_socket_id === this.id) {
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: `\\text{${this.left_entry_value.slice(
-                    0,
+                tex: text_with_cursor(
+                    this.left_entry_value,
                     this.cursor_position
-                )}}${CURSOR_LATEX}\\text{${this.left_entry_value.slice(
-                    this.cursor_position
-                )}}`,
+                ),
             };
         } else {
             return {
@@ -104,9 +175,11 @@ export class VDecSocket implements VSocket {
     };
 
     get_child_sockets = () => {
-        const a: VSocket[] = [];
-
-        return a;
+        if (!!this.declaration) {
+            return this.declaration.get_child_sockets();
+        } else {
+            return [];
+        }
     };
 
     /** This method checks whether we have the
@@ -388,5 +461,9 @@ export class VDecSocket implements VSocket {
                 }
             }
         }
+    };
+
+    commit_seq = (page_id: string) => {
+        kernel_link.fill_dec_socket(page_id, this.id, this.left_entry_value);
     };
 }
