@@ -1,3 +1,5 @@
+import { palette } from "../../../../global_styles/palette";
+
 export enum ReducedFormTag {
     TexLine,
     GlobalHeader,
@@ -54,92 +56,110 @@ export type ReducedFormType =
     | InlinePropType
     | LambdaPropType;
 
-// export const example_reduced_forms: ReducedFormType[] = [
-//     {
-//         title: "Axiom",
-//         title_color: palette.uni_form_red,
-//         main_tex: "\\alpha \\Rightarrow \\beta",
-//         label: "b",
-//         pg_index: "1.01",
-//         children: [],
-//     },
-//     {
-//         title: "Theorem",
-//         title_color: palette.exi_form_blue,
-//         main_tex: "\\frac{\\zeta}{\\Omega}",
-//         label: "b",
-//         pg_index: "1.02",
-//         children: [
-//             {
-//                 tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
-//             },
-//             {
-//                 tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//             },
-//         ],
-//     },
-//     {
-//         header_tex: "\\vdash \\; p \\wedge q \\Rightarrow p",
-//         body_name: "proof",
-//         children: [
-//             {
-//                 intro_tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//                 label: "t",
-//                 pg_index: "3.01",
-//                 children: [
-//                     {
-//                         tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
-//                     },
-//                     {
-//                         tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//                     },
-//                     {
-//                         tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//                     },
-//                     {
-//                         tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//                     },
-//                     {
-//                         prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
-//                         explanation: "Use butt with other butt",
-//                         label: "r",
-//                         pg_index: "1.14",
-//                     },
-//                     {
-//                         prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
-//                         explanation: "Use butt with other butt",
-//                         label: "r",
-//                         pg_index: "1.14",
-//                     },
-//                 ],
-//             },
-//             {
-//                 tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
-//             },
-//             {
-//                 tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//             },
-//             {
-//                 tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//             },
-//             {
-//                 tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
-//             },
-//             {
-//                 prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
-//                 explanation: "Use butt with other butt",
-//                 label: "r",
-//                 pg_index: "1.14",
-//             },
-//             {
-//                 prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
-//                 explanation: "Use butt with other butt",
-//                 label: "r",
-//                 pg_index: "1.14",
-//             },
-//         ],
-//         footer_tex: "\\therefore \\; p \\wedge q \\Rightarrow p",
-//         label: "b",
-//         pg_index: "1.02",
-//     },
-// ];
+export const example_reduced_forms: ReducedFormType[] = [
+    {
+        tag: ReducedFormTag.GlobalHeader,
+        title: "Axiom",
+        title_color: palette.uni_form_red,
+        main_tex: "\\alpha \\Rightarrow \\beta",
+        label: "b",
+        pg_index: "1.01",
+        children: [],
+    },
+    {
+        tag: ReducedFormTag.GlobalHeader,
+        title: "Theorem",
+        title_color: palette.exi_form_blue,
+        main_tex: "\\frac{\\zeta}{\\Omega}",
+        label: "b",
+        pg_index: "1.02",
+        children: [
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+            },
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+        ],
+    },
+    {
+        tag: ReducedFormTag.SurroundIndent,
+        header_tex: "\\vdash \\; p \\wedge q \\Rightarrow p",
+        body_name: "proof",
+        children: [
+            {
+                tag: ReducedFormTag.LambdaProp,
+                intro_tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                label: "t",
+                pg_index: "3.01",
+                children: [
+                    {
+                        tag: ReducedFormTag.TexLine,
+                        tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                    },
+                    {
+                        tag: ReducedFormTag.TexLine,
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        tag: ReducedFormTag.TexLine,
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        tag: ReducedFormTag.TexLine,
+                        tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+                    },
+                    {
+                        tag: ReducedFormTag.InlineProp,
+                        prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                        explanation: "Use butt with other butt",
+                        label: "r",
+                        pg_index: "1.14",
+                    },
+                    {
+                        tag: ReducedFormTag.InlineProp,
+                        prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
+                        explanation: "Use butt with other butt",
+                        label: "r",
+                        pg_index: "1.14",
+                    },
+                ],
+            },
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+            },
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                tag: ReducedFormTag.TexLine,
+                tex: `\\text{{\\color{${palette.condi_form_salmon}}{{let}}} \\: $\\zeta$ \\; := \\; $\\beta$}`,
+            },
+            {
+                tag: ReducedFormTag.InlineProp,
+                prop: "\\frac{\\alpha \\Rightarrow \\zeta}{\\eta}",
+                explanation: "Use butt with other butt",
+                label: "r",
+                pg_index: "1.14",
+            },
+            {
+                tag: ReducedFormTag.InlineProp,
+                prop: "\\frac{\\omega \\Rightarrow \\delta}{\\int_{x = 2}^{x = 4} x^3 dx}",
+                explanation: "Use butt with other butt",
+                label: "r",
+                pg_index: "1.14",
+            },
+        ],
+        footer_tex: "\\therefore \\; p \\wedge q \\Rightarrow p",
+        label: "b",
+        pg_index: "1.02",
+    },
+];

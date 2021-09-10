@@ -172,12 +172,12 @@ export class VirtualPage implements VSocket {
         });
 
         window.addEventListener("focus", () => {
-            this.window_in_focus = true;
+            // this.window_in_focus = true;
             this.process_change();
         });
 
         window.addEventListener("blur", () => {
-            this.window_in_focus = false;
+            // this.window_in_focus = false;
             this.process_change();
         });
     };

@@ -1,9 +1,9 @@
 import React from "react";
 import "./prototype_styles.scss";
-import MathJaxElement from "../../global_building_blocks/mathjax_element/mathjax_element";
 import Strategy from "./building_blocks/strategy/strategy";
 import Lambda from "./building_blocks/lambda/lambda";
 import TwoColumn from "./building_blocks/two_column/two_column";
+import TexElement from "../../global_building_blocks/tex_element/tex_element";
 
 const Prototype: React.FC = () => {
     return (
@@ -11,7 +11,7 @@ const Prototype: React.FC = () => {
             <div className="theorem-container">
                 <div className="theorem-title">Theorem 1</div>
                 <div className="theorem-math">
-                    <MathJaxElement
+                    <TexElement
                         tex="\left(\exists x,\; p(x) \wedge r\right) \Leftrightarrow \left(\exists x,\; p(x) \right) \wedge r"
                         showTermHints={false}
                         selectTerm={() => {}}

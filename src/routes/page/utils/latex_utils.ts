@@ -16,13 +16,13 @@ export function text_with_cursor(
 ): string {
     return create_tex_text(
         text.slice(0, cursor_position) +
-            `\\cssId{cursor}{|}` +
+            `\\htmlId{cursor}{|}` +
             text.slice(cursor_position)
     );
 }
 
 export function wrap_css_id(tex: string, css_id: string) {
-    return `{\\cssId{${css_id}}{${tex}}`;
+    return `{\\htmlId{${css_id}}{${tex}}`;
 }
 
 export const LATEX_SPACE = "\\;";

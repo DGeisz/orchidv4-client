@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import "./global_header_styles.scss";
 import "../../../page_styles.scss";
-import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import ReducedForm from "../reduced_form";
 import { GlobalHeaderType } from "../../../page_types/reduced_form/reduced_form";
+import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     global_header: GlobalHeaderType;
@@ -25,10 +25,7 @@ const GlobalHeader: React.FC<Props> = (props) => {
                 </div>
                 <div className="gh-content">
                     <div className="gh-content-left">
-                        <MathJaxElement
-                            tex={global_header.main_tex}
-                            termIds={[]}
-                        />
+                        <TexElement tex={global_header.main_tex} termIds={[]} />
                     </div>
                     <div className="gh-content-right">
                         <div className="pg-label">{global_header.label}</div>

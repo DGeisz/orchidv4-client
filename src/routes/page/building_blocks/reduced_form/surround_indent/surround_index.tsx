@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./surround_index_styles.scss";
 import ReducedForm from "../reduced_form";
-import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import { SurroundIndentType } from "../../../page_types/reduced_form/reduced_form";
+import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     surround_indent: SurroundIndentType;
@@ -17,10 +17,7 @@ const SurroundIndent: React.FC<Props> = (props) => {
         <div className="si-container">
             <div className="si-header">
                 <div className="si-header-left">
-                    <MathJaxElement
-                        tex={surround_indent.header_tex}
-                        termIds={[]}
-                    />
+                    <TexElement tex={surround_indent.header_tex} termIds={[]} />
                 </div>
                 <div className="si-header-right">
                     {body_visible && (
@@ -51,10 +48,7 @@ const SurroundIndent: React.FC<Props> = (props) => {
             </div>
             <div className="si-footer">
                 <div className="si-footer-left">
-                    <MathJaxElement
-                        tex={surround_indent.footer_tex}
-                        termIds={[]}
-                    />
+                    <TexElement tex={surround_indent.footer_tex} termIds={[]} />
                 </div>
                 <div className="si-footer-right">
                     {!!surround_indent.label && (

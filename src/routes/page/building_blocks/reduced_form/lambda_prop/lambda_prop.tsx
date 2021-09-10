@@ -1,8 +1,8 @@
 import React from "react";
 import "./lambda_prop_styles.scss";
-import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import ReducedForm from "../reduced_form";
 import { LambdaPropType } from "../../../page_types/reduced_form/reduced_form";
+import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     lambda_prop: LambdaPropType;
@@ -15,7 +15,7 @@ const LambdaProp: React.FC<Props> = (props) => {
         <div className="lambda-container">
             <div className="lam-header-container">
                 <div className="lam-header-left">
-                    <MathJaxElement tex={lambda_prop.intro_tex} termIds={[]} />
+                    <TexElement tex={lambda_prop.intro_tex} termIds={[]} />
                 </div>
                 <div className="lam-header-right">
                     <div className="pg-label">{lambda_prop.label}</div>

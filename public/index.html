@@ -24,39 +24,13 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-        <script>
-            mathjaxLoaded = false;
-
-            MathJax = {
-                tex: {
-                    inlineMath: [
-                        ["$", "$"],
-                        ["\\(", "\\)"],
-                    ],
-                },
-                chtml: {
-                    displayAlign: "left",
-                },
-                options: {
-                    enableMenu: false,
-                },
-                startup: {
-                    ready: () => {
-                        window.mathjaxLoaded = true;
-                        MathJax.startup.defaultReady();
-                    },
-                },
-            };
-        </script>
-        <script
-            id="MathJax-script"
-            async
-            src="%PUBLIC_URL%/mathjax/es5/tex-chtml-full.js"
-        ></script>
+        <!--Katex-->
+        <script nomodule defer src="%PUBLIC_URL%/katex/katex.js" integrity="sha384-UWjC+k927Mtx6WQF5SzKTXLLrOYmzs69HvkUjiKvUwSOljzc+C6PrGquNpOvJBBo" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="%PUBLIC_URL%/katex/katex.css" integrity="sha384-ysFyB7Is//Q1JNgERb0bLJokXKM8eWJsjEutGvthoHtBilHWgbdmbYkQZdwCIGIq" crossorigin="anonymous">
         <title>Orchid</title>
         <style>
-            mjx-container[display="true"] {
-                margin: 0 0 !important;
+            .katex-display {
+                margin: 0 !important;
             }
         </style>
     </head>

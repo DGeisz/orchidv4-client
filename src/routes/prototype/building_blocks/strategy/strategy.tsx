@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../prototype_styles.scss";
-import MathJaxElement from "../../../../global_building_blocks/mathjax_element/mathjax_element";
 import TwoColumn from "../two_column/two_column";
+import TexElement from "../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     content: string;
@@ -34,7 +34,7 @@ const Strategy: React.FC<Props> = (props) => {
                                 </div>
                                 {props.goalTex.map((tex) => (
                                     <div className="goal-math">
-                                        <MathJaxElement
+                                        <TexElement
                                             tex={tex}
                                             showTermHints={false}
                                             selectTerm={() => {}}

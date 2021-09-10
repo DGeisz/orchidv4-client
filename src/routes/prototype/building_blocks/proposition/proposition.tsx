@@ -1,6 +1,6 @@
 import React from "react";
 import "../../prototype_styles.scss";
-import MathJaxElement from "../../../../global_building_blocks/mathjax_element/mathjax_element";
+import TexElement from "../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     tex: string;
@@ -11,7 +11,7 @@ const Proposition: React.FC<Props> = (props) => {
     return (
         <div className="prop-container">
             <div className="prop-math">
-                <MathJaxElement
+                <TexElement
                     tex={props.tex}
                     showTermHints={false}
                     selectTerm={() => {}}

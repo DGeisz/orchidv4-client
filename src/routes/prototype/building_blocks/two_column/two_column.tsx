@@ -1,5 +1,5 @@
 import React from "react";
-import MathJaxElement from "../../../../global_building_blocks/mathjax_element/mathjax_element";
+import TexElement from "../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     tex: string;
@@ -12,7 +12,7 @@ const TwoColumn: React.FC<Props> = (props) => {
         <div className="two-column-container">
             <div className="two-column-left">
                 <div className="two-left-left">
-                    <MathJaxElement
+                    <TexElement
                         tex={props.tex}
                         showTermHints={false}
                         selectTerm={() => {}}

@@ -4,7 +4,8 @@
 
 @font-face {
     font-family: JaxMain;
-    src: local("JaxMain"), url("fonts/MathJax_Main-Regular.woff");
+    //src: local("JaxMain"), url("fonts/MathJax_Main-Regular.woff");
+    src: local("JaxMain"), url("fonts/KaTeX_Main-Regular.ttf");
 }
 
 %jax-main {
@@ -18,13 +19,15 @@
     border-left: solid 1px $semiSoftGray;
 }
 
-$tex-size: 13pt;
+$tex-size: 12pt;
 $pg-indent: 20px;
 $form-vertical-margin: 15px;
 
-#cursor {
-    width: 0;
+#cursor span {
+    width: 0 !important;
+    position: absolute;
     transform: translateX(-2px) translateY(-1px) scaleY(1.1);
+    background-color: blue;
 }
 
 .loading-page-container {

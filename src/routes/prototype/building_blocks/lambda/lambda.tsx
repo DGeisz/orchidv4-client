@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../prototype_styles.scss";
 import Proposition from "../proposition/proposition";
-import MathJaxElement from "../../../../global_building_blocks/mathjax_element/mathjax_element";
+import TexElement from "../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     goal: string;
@@ -48,7 +48,7 @@ const Lambda: React.FC<Props> = (props) => {
                 <div className="prop-lambda-children">{props.children}</div>
             )}
             <div className="lam-conclusion">
-                <MathJaxElement
+                <TexElement
                     tex={`\\therefore \\; ${props.goal}`}
                     showTermHints={false}
                     selectTerm={() => {}}

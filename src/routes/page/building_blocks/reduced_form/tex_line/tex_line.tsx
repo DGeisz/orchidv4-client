@@ -1,7 +1,7 @@
 import React from "react";
 import "./tex_line_styles.scss";
-import MathJaxElement from "../../../../../global_building_blocks/mathjax_element/mathjax_element";
 import { TexLineType } from "../../../page_types/reduced_form/reduced_form";
+import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 
 interface Props {
     tex_line: TexLineType;
@@ -10,7 +10,7 @@ interface Props {
 const TexLine: React.FC<Props> = (props) => {
     return (
         <div className="tex-container">
-            <MathJaxElement tex={props.tex_line.tex} termIds={[]} />
+            <TexElement tex={props.tex_line.tex} termIds={[]} />
         </div>
     );
 };
