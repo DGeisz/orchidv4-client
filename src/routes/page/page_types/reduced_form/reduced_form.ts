@@ -1,4 +1,5 @@
 import { palette } from "../../../../global_styles/palette";
+import { add_latex_color, create_tex_text } from "../../utils/latex_utils";
 
 export enum ReducedFormTag {
     TexLine,
@@ -11,6 +12,13 @@ export enum ReducedFormTag {
 export interface TexLineType {
     tag: ReducedFormTag.TexLine;
     tex: string;
+}
+
+export function error_form(): ReducedFormType {
+    return {
+        tag: ReducedFormTag.TexLine,
+        tex: add_latex_color(create_tex_text("ERROR"), palette.danger),
+    };
 }
 
 export interface GlobalHeaderType {

@@ -29,7 +29,7 @@
 .gh-content-right {
     @extend %flexRow;
     align-items: flex-end;
-    line-height: 5px;
+    //line-height: 5px;
 }
 
 .proof-container {
@@ -48,7 +48,6 @@
     line-height: 5px;
     padding-top: 10px;
 }
-
 
 .gh-proof-title {
     @extend .proof-text;

@@ -17,27 +17,27 @@ const TexElement: React.FC<Props> = (props) => {
 
     useEffect(() => {
         props.termIds.forEach((id) => {
-            let jax_node = document.getElementById(id);
+            let tex_node = document.getElementById(id);
 
-            if (!!jax_node) {
-                const og_color = jax_node.style.backgroundColor;
+            if (!!tex_node) {
+                const og_color = tex_node.style.backgroundColor;
 
-                jax_node.style.transition = "all 100ms ease-in-out";
-                jax_node.style.cursor = "pointer";
-                jax_node.style.position = "relative";
+                tex_node.style.transition = "all 100ms ease-in-out";
+                tex_node.style.cursor = "pointer";
+                tex_node.style.position = "relative";
 
-                jax_node.onmousedown = () =>
+                tex_node.onmousedown = () =>
                     !!props.selectTerm && props.selectTerm(id);
 
-                jax_node.onmouseover = () => {
-                    if (!!jax_node) {
-                        jax_node.style.color = HOVER_COLOR;
+                tex_node.onmouseover = () => {
+                    if (!!tex_node) {
+                        tex_node.style.color = HOVER_COLOR;
                     }
                 };
 
-                jax_node.onmouseleave = () => {
-                    if (!!jax_node) {
-                        jax_node.style.color = og_color;
+                tex_node.onmouseleave = () => {
+                    if (!!tex_node) {
+                        tex_node.style.color = og_color;
                     }
                 };
             }
@@ -52,11 +52,11 @@ const TexElement: React.FC<Props> = (props) => {
             const newTermHints: HTMLDivElement[] = [];
 
             props.termIds.forEach((id, index) => {
-                let jax_node = document.getElementById(id);
+                let tex_node = document.getElementById(id);
 
-                if (!!jax_node) {
+                if (!!tex_node) {
                     const domHint = genTermHint(hints[index]);
-                    jax_node.appendChild(domHint);
+                    tex_node.appendChild(domHint);
                     newTermHints.push(domHint);
                 }
             });
@@ -73,6 +73,7 @@ const TexElement: React.FC<Props> = (props) => {
                     trust: true,
                     displayMode: true,
                     output: "html",
+                    strict: false,
                 }),
             }}
         />

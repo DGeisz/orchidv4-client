@@ -1,19 +1,11 @@
-import { VConstant } from "./v_constant/v_constant";
-import { VDefinition } from "./v_definition/v_definition";
 import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
-import { is_some } from "../../../page_types/page_serde/utils/rust_option";
-import {
-    DecSer,
-    DecSocketSer,
-    is_const,
-    is_def,
-} from "../../../page_types/page_serde/lexicon/declaration/dec_serialization";
+import { VLex } from "../v_lex";
+import { ExprSocketSer } from "../../../page_types/page_serde/lexicon/expression/expr_serialization";
+import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
     ReducedFormTag,
     ReducedFormType,
 } from "../../../page_types/reduced_form/reduced_form";
-import { VLex } from "../v_lex";
-import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
     active_socket_tex,
     add_latex_color,
@@ -24,8 +16,8 @@ import {
 } from "../../../utils/latex_utils";
 import { palette } from "../../../../../global_styles/palette";
 
-export class VDecSocket implements VSocket {
-    private declaration?: VLex;
+export class VExprSocket implements VSocket {
+    private expression?: VLex;
     private readonly id: string;
     private readonly parent_socket: VSocket;
 
@@ -37,46 +29,26 @@ export class VDecSocket implements VSocket {
     private right_entry_value: string = "";
     private cursor_position: number = 0;
 
-    constructor(dec_socket_ser: DecSocketSer, parent_socket: VSocket) {
-        const { id, dec_ser } = dec_socket_ser;
+    constructor(expr_socket_ser: ExprSocketSer, parent_socket: VSocket) {
+        const { id, expr_ser } = expr_socket_ser;
         this.id = id;
         this.parent_socket = parent_socket;
-
-        if (is_some(dec_ser)) {
-            if (is_const(dec_ser)) {
-                this.declaration = new VConstant(dec_ser.Const, this);
-            } else {
-                this.declaration = new VDefinition(dec_ser.Def);
-            }
-        }
     }
 
-    update = (dec_socket_ser: DecSocketSer) => {
-        if (dec_socket_ser.id === this.id) {
-            if (is_some<DecSer>(dec_socket_ser.dec_ser)) {
-                const { dec_ser } = dec_socket_ser;
-
-                if (is_const(dec_ser)) {
-                    this.declaration = new VConstant(dec_ser.Const, this);
-                } else if (is_def(dec_ser)) {
-                    this.declaration = new VDefinition(dec_ser.Def);
-                }
-
-                this.left_entry_value = "";
-                this.right_entry_value = "";
-                this.cursor_position = 0;
-            }
-        }
+    get_id = () => {
+        return this.id;
     };
 
-    get_reduced_form: (cursor_socket_id: string) => ReducedFormType = (
+    get_reduced_form: (
         cursor_socket_id: string
-    ) => {
-        if (!!this.declaration) {
+    ) => ReducedFormType | ReducedFormType[] = (cursor_socket_id: string) => {
+        if (!!this.expression) {
             const child_form =
-                this.declaration.get_reduced_form(cursor_socket_id);
+                this.expression.get_reduced_form(cursor_socket_id);
 
-            if (!Array.isArray(child_form)) {
+            if (Array.isArray(child_form)) {
+                return child_form;
+            } else {
                 if (cursor_socket_id === this.id) {
                     switch (child_form.tag) {
                         case ReducedFormTag.TexLine: {
@@ -109,23 +81,23 @@ export class VDecSocket implements VSocket {
                             break;
                         }
                         default:
-                            return child_form;
+                            return {
+                                tag: ReducedFormTag.TexLine,
+                                tex: add_latex_color("ERROR", palette.danger),
+                            };
                     }
                 } else {
                     return child_form;
                 }
-            } else {
-                return {
-                    tag: ReducedFormTag.TexLine,
-                    tex: add_latex_color("ERROR", palette.danger),
-                };
             }
         } else if (cursor_socket_id === this.id) {
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: text_with_cursor(
-                    this.left_entry_value,
-                    this.cursor_position
+                tex: active_socket_tex(
+                    text_with_cursor(
+                        this.left_entry_value,
+                        this.cursor_position
+                    )
                 ),
             };
         } else {
@@ -138,10 +110,6 @@ export class VDecSocket implements VSocket {
                 ),
             };
         }
-    };
-
-    get_id = () => {
-        return this.id;
     };
 
     activate_left_cursor = (from_left: boolean) => {
@@ -163,7 +131,7 @@ export class VDecSocket implements VSocket {
          * If the socket is empty, then we always
          * favor the left side
          */
-        if (!this.declaration) {
+        if (!this.expression) {
             return this.activate_left_cursor(from_left);
         }
 
@@ -179,8 +147,8 @@ export class VDecSocket implements VSocket {
     };
 
     get_child_sockets = () => {
-        if (!!this.declaration) {
-            return this.declaration.get_child_sockets();
+        if (!!this.expression) {
+            return this.expression.get_child_sockets();
         } else {
             return [];
         }
@@ -192,7 +160,7 @@ export class VDecSocket implements VSocket {
      * in the right entry, and we move to the
      * end of the left entry */
     private check_right_left = () => {
-        if (!this.declaration && this.cursor_side === CursorSide.Right) {
+        if (!this.expression && this.cursor_side === CursorSide.Right) {
             this.right_entry_value = "";
             this.cursor_side = CursorSide.Left;
             this.cursor_position = this.left_entry_value.length;
@@ -293,8 +261,6 @@ export class VDecSocket implements VSocket {
              */
             const parent_children = this.parent_socket.get_child_sockets();
 
-            console.log("Here are parent children", parent_children);
-
             /*
              * Now we figure out my index in the list so I can
              * get the next socket
@@ -311,9 +277,9 @@ export class VDecSocket implements VSocket {
              */
             if (self_index < 0 || self_index === parent_children.length - 1) {
                 /* We're coming from the left (cause we're inside) */
-                return cursor_moved(
-                    this.parent_socket.activate_right_cursor(true)
-                );
+                this.parent_socket.activate_right_cursor(true);
+
+                return cursor_moved(this.parent_socket);
             } else {
                 /* Otherwise, we push to the next child */
                 const next_socket = parent_children[self_index + 1];
@@ -332,7 +298,7 @@ export class VDecSocket implements VSocket {
                     /*
                      * First handle the case where the socket is empty
                      */
-                    if (!this.declaration) {
+                    if (!this.expression) {
                         return move_cursor_next_socket();
                     } else {
                         /*
@@ -469,7 +435,5 @@ export class VDecSocket implements VSocket {
         }
     };
 
-    commit_seq = (page_id: string) => {
-        kernel_link.fill_dec_socket(page_id, this.id, this.left_entry_value);
-    };
+    commit_seq = (page_id: string) => {};
 }

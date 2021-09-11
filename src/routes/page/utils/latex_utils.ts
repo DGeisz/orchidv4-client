@@ -1,9 +1,15 @@
+import { palette } from "../../../global_styles/palette";
+
 export function add_latex_color(tex: string, color: string) {
     return `{\\color{${color}}{${tex}}}`;
 }
 
 export function add_color_box(tex: string, color: string) {
-    return `{\\color_box{${color}}{${tex}}}`;
+    return `{\\colorbox{${color}}{${tex}}}`;
+}
+
+export function active_socket_tex(tex: string): string {
+    return add_color_box(tex, palette.socket_active_blue);
 }
 
 export function create_tex_text(text: string) {
@@ -26,3 +32,4 @@ export function wrap_css_id(tex: string, css_id: string) {
 }
 
 export const LATEX_SPACE = "\\;";
+export const LATEX_EMPTY_SOCKET = "□"; //"☐";

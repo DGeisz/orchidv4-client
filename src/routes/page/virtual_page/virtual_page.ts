@@ -4,12 +4,39 @@ import {
     WsResponse,
 } from "../../../kernel_link/ws_response";
 import { VDecSocket } from "./v_lexicon/v_declaration/v_dec_socket";
-import { cursor_success, VSocket } from "./v_lexicon/v_socket";
+import {
+    cursor_success,
+    CursorResponseTag,
+    VSocket,
+} from "./v_lexicon/v_socket";
 import { ReducedFormType } from "../page_types/reduced_form/reduced_form";
+
+const BLUR_ON_LEAVE: boolean = true;
 
 export const CURSOR_NAME = "cursor";
 export const CURSOR_LATEX: string =
     "\\cssId{cursor}{\\color{black}{\\boldsymbol{|}}}";
+
+const ALLOWED_NON_ALPHA_NUMERIC_CHARS = [
+    "/",
+    "[",
+    "]",
+    "(",
+    ")",
+    ",",
+    "<",
+    ">",
+    "-",
+    "!",
+    "*",
+    "+",
+    "=",
+    "'",
+    '"',
+    ";",
+    ":",
+    "|",
+];
 
 /**
  * The virtual page intakes commands from the kernel link
@@ -118,7 +145,11 @@ export class VirtualPage implements VSocket {
         document.addEventListener("keypress", (e) => {
             const char = e.key.trim();
 
-            if (char.length === 1) {
+            if (
+                char.length === 1 &&
+                (/^[a-z0-9]+$/i.test(char) ||
+                    ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
+            ) {
                 !!this.cursor && this.cursor.insert_char(char);
             }
 
@@ -146,11 +177,21 @@ export class VirtualPage implements VSocket {
                         break;
                     }
                     case "ArrowLeft": {
-                        this.cursor.move_cursor_previous();
+                        const response = this.cursor.move_cursor_previous();
+
+                        if (response.tag === CursorResponseTag.MoveSocket) {
+                            this.cursor = response.new_socket;
+                        }
+
                         break;
                     }
                     case "ArrowRight": {
-                        this.cursor.move_cursor_next();
+                        const response = this.cursor.move_cursor_next();
+
+                        if (response.tag === CursorResponseTag.MoveSocket) {
+                            this.cursor = response.new_socket;
+                        }
+
                         break;
                     }
                     case "Enter": {
@@ -172,12 +213,18 @@ export class VirtualPage implements VSocket {
         });
 
         window.addEventListener("focus", () => {
-            // this.window_in_focus = true;
+            if (BLUR_ON_LEAVE) {
+                this.window_in_focus = true;
+            }
+
             this.process_change();
         });
 
         window.addEventListener("blur", () => {
-            // this.window_in_focus = false;
+            if (BLUR_ON_LEAVE) {
+                this.window_in_focus = false;
+            }
+
             this.process_change();
         });
     };

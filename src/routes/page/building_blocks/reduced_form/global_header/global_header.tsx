@@ -28,7 +28,12 @@ const GlobalHeader: React.FC<Props> = (props) => {
                         <TexElement tex={global_header.main_tex} termIds={[]} />
                     </div>
                     <div className="gh-content-right">
-                        <div className="pg-label">{global_header.label}</div>
+                        <div className="pg-label">
+                            <TexElement
+                                tex={global_header.label}
+                                termIds={[]}
+                            />
+                        </div>
                         <div className="pg-index">
                             ({global_header.pg_index})
                         </div>

@@ -24,10 +24,10 @@ $pg-indent: 20px;
 $form-vertical-margin: 15px;
 
 #cursor span {
+    display: inline-block;
     width: 0 !important;
-    position: absolute;
+    //position: absolute;
     transform: translateX(-2px) translateY(-1px) scaleY(1.1);
-    background-color: blue;
 }
 
 .loading-page-container {
@@ -70,7 +70,7 @@ $form-vertical-margin: 15px;
 .proof-text {
     @extend %jax-main;
     font-size: 10pt;
-    line-height: 5px;
+    //line-height: 5px;
     padding-top: 10px;
 }
 

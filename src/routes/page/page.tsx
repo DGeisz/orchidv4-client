@@ -7,10 +7,7 @@ import { palette } from "../../global_styles/palette";
 import { VirtualPage } from "./virtual_page/virtual_page";
 import ReducedForm from "./building_blocks/reduced_form/reduced_form";
 import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_mode_switch";
-import {
-    example_reduced_forms,
-    ReducedFormType,
-} from "./page_types/reduced_form/reduced_form";
+import { ReducedFormType } from "./page_types/reduced_form/reduced_form";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
@@ -28,7 +25,7 @@ const Page: React.FC = () => {
             kernel_link.set_handler(virtual_page.process_response);
 
             /*
-             * Then let the kernel know we want
+             * Then let_assignment the kernel know we want
              * a full page serialization
              */
             kernel_link.full_page(pid);

@@ -4,6 +4,7 @@ import {
 } from "../../../../page_types/page_serde/lexicon/declaration/constant/const_serialization";
 import { VLex } from "../../v_lex";
 import {
+    error_form,
     ReducedFormTag,
     ReducedFormType,
 } from "../../../../page_types/reduced_form/reduced_form";
@@ -13,25 +14,57 @@ import {
     LATEX_SPACE,
 } from "../../../../utils/latex_utils";
 import { palette } from "../../../../../../global_styles/palette";
+import { VTermDef } from "../../v_term_def/v_term_def";
+import { VSocket } from "../../v_socket";
 
 export class VConstant implements VLex {
     private variation: ConstVariation;
+    private term_def: VTermDef;
 
-    constructor(const_ser: ConstSer) {
-        this.variation = const_ser.variation;
+    constructor(const_ser: ConstSer, parent_socket: VSocket) {
+        const { variation, term_def_ser } = const_ser;
+
+        this.variation = variation;
+        this.term_def = new VTermDef(term_def_ser, parent_socket);
     }
 
-    get_reduced_form: (c: string) => ReducedFormType = () => {
-        return {
-            tag: ReducedFormTag.TexLine,
-            tex: `${add_latex_color(
-                create_tex_text("constant"),
-                palette.condi_form_salmon
-            )} ${LATEX_SPACE} \\Omega : \\mathbb{R}`,
-        };
+    get_reduced_form: (c: string) => ReducedFormType = (
+        cursor_socket_id: string
+    ) => {
+        const term_forms = this.term_def.get_reduced_form(cursor_socket_id);
+
+        if (
+            term_forms[0].tag !== ReducedFormTag.TexLine ||
+            term_forms[1].tag !== ReducedFormTag.TexLine
+        ) {
+            return error_form();
+        }
+
+        switch (this.variation) {
+            case ConstVariation.Axiom:
+                return {
+                    tag: ReducedFormTag.GlobalHeader,
+                    title: "Axiom",
+                    title_color: palette.uni_form_red,
+                    main_tex: term_forms[0].tex,
+                    label: term_forms[1].tex,
+                    pg_index: "1.01",
+                    children: [],
+                };
+            case ConstVariation.Constant:
+                return {
+                    tag: ReducedFormTag.TexLine,
+                    tex: `${add_latex_color(
+                        create_tex_text("constant"),
+                        palette.condi_form_salmon
+                    )} ${LATEX_SPACE} ${term_forms[0].tex} : ${
+                        term_forms[1].tex
+                    }`,
+                };
+        }
     };
 
     get_child_sockets = () => {
-        return [];
+        return this.term_def.get_child_sockets();
     };
 }

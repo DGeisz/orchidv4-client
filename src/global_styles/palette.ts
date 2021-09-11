@@ -85,4 +85,6 @@ export const palette = {
     dangerLight: "#f2cbcf",
     primary: "#007bff",
     primaryLight: "#c4e1ff",
+
+    socket_active_blue: "#f5f9fa",
 };
