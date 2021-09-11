@@ -46,7 +46,7 @@ export class VDecSocket implements VSocket {
             if (is_const(dec_ser)) {
                 this.declaration = new VConstant(dec_ser.Const, this);
             } else {
-                this.declaration = new VDefinition(dec_ser.Def);
+                this.declaration = new VDefinition(dec_ser.Def, this);
             }
         }
     }
@@ -59,7 +59,7 @@ export class VDecSocket implements VSocket {
                 if (is_const(dec_ser)) {
                     this.declaration = new VConstant(dec_ser.Const, this);
                 } else if (is_def(dec_ser)) {
-                    this.declaration = new VDefinition(dec_ser.Def);
+                    this.declaration = new VDefinition(dec_ser.Def, this);
                 }
 
                 this.left_entry_value = "";

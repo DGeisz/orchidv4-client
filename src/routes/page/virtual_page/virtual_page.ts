@@ -15,6 +15,9 @@ import {
     CURSOR_NAME,
 } from "../utils/latex_utils";
 
+/* This is just for debugging purposes.
+ * If set to false, the cursor keeps blinking
+ * after another window is activated */
 const BLUR_ON_LEAVE: boolean = true;
 
 /**

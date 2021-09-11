@@ -65,6 +65,8 @@ const TexElement: React.FC<Props> = (props) => {
         }
     }, [props.showTermHints, props.tex, props.termIds]);
 
+    // return <div>{props.tex}</div>;
+
     return (
         <div
             className="tex-container-tex"

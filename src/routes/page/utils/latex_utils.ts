@@ -5,7 +5,7 @@ export function add_latex_color(tex: string, color: string) {
 }
 
 export function add_color_box(tex: string, color: string) {
-    return `{\\colorbox{${color}}{${tex}}}`;
+    return `\\colorbox{${color}}{$\\displaystyle ${tex} $}`;
 }
 
 export function active_socket_tex(tex: string): string {
@@ -13,7 +13,7 @@ export function active_socket_tex(tex: string): string {
 }
 
 export function create_tex_text(text: string) {
-    return `\\text{${text}}`;
+    return `{\\text{${text}}}`;
 }
 
 export function text_with_cursor(
@@ -32,7 +32,7 @@ export function wrap_css_id(tex: string, css_id: string) {
 }
 
 export const LATEX_SPACE = "\\;";
-export const LATEX_EMPTY_SOCKET = "□"; //"☐";
+export const LATEX_EMPTY_SOCKET = "□";
 
 export const CURSOR_NAME = "cursor";
 export const CURSOR_LATEX: string =

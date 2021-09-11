@@ -18,7 +18,7 @@ import { VTermDef } from "../../v_term_def/v_term_def";
 import { VSocket } from "../../v_socket";
 
 export class VConstant implements VLex {
-    private variation: ConstVariation;
+    private readonly variation: ConstVariation;
     private term_def: VTermDef;
 
     constructor(const_ser: ConstSer, parent_socket: VSocket) {
