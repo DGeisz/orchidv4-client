@@ -10,33 +10,12 @@ import {
     VSocket,
 } from "./v_lexicon/v_socket";
 import { ReducedFormType } from "../page_types/reduced_form/reduced_form";
+import {
+    ALLOWED_NON_ALPHA_NUMERIC_CHARS,
+    CURSOR_NAME,
+} from "../utils/latex_utils";
 
 const BLUR_ON_LEAVE: boolean = true;
-
-export const CURSOR_NAME = "cursor";
-export const CURSOR_LATEX: string =
-    "\\cssId{cursor}{\\color{black}{\\boldsymbol{|}}}";
-
-const ALLOWED_NON_ALPHA_NUMERIC_CHARS = [
-    "/",
-    "[",
-    "]",
-    "(",
-    ")",
-    ",",
-    "<",
-    ">",
-    "-",
-    "!",
-    "*",
-    "+",
-    "=",
-    "'",
-    '"',
-    ";",
-    ":",
-    "|",
-];
 
 /**
  * The virtual page intakes commands from the kernel link

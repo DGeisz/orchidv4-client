@@ -33,3 +33,28 @@ export function wrap_css_id(tex: string, css_id: string) {
 
 export const LATEX_SPACE = "\\;";
 export const LATEX_EMPTY_SOCKET = "□"; //"☐";
+
+export const CURSOR_NAME = "cursor";
+export const CURSOR_LATEX: string =
+    "\\cssId{cursor}{\\color{black}{\\boldsymbol{|}}}";
+
+export const ALLOWED_NON_ALPHA_NUMERIC_CHARS = [
+    "/",
+    "[",
+    "]",
+    "(",
+    ")",
+    ",",
+    "<",
+    ">",
+    "-",
+    "!",
+    "*",
+    "+",
+    "=",
+    "'",
+    '"',
+    ";",
+    ":",
+    "|",
+];
