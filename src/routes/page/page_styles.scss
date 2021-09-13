@@ -93,6 +93,7 @@ $form-vertical-margin: 15px;
 }
 
 .pg-footer {
+    @extend %flexRow;
 }
 
 .pg-add-button {
