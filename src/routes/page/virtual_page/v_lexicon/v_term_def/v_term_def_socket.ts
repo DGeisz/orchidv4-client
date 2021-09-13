@@ -9,6 +9,7 @@ import {
     create_tex_text,
     LATEX_EMPTY_SOCKET,
     text_with_cursor,
+    wrap_html_id,
 } from "../../../utils/latex_utils";
 
 export class VTermDefSocket implements VSocket {
@@ -43,16 +44,29 @@ export class VTermDefSocket implements VSocket {
                         this.cursor_position
                     )
                 ),
+                socket_ids: [this.id],
             };
         } else {
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: create_tex_text(
-                    !!this.left_entry_value
-                        ? this.left_entry_value
-                        : LATEX_EMPTY_SOCKET
+                tex: wrap_html_id(
+                    create_tex_text(
+                        !!this.left_entry_value
+                            ? this.left_entry_value
+                            : LATEX_EMPTY_SOCKET
+                    ),
+                    this.id
                 ),
+                socket_ids: [this.id],
             };
+        }
+    };
+
+    get_socket = (socket_id: string) => {
+        if (socket_id === this.id) {
+            return this;
+        } else {
+            return null;
         }
     };
 

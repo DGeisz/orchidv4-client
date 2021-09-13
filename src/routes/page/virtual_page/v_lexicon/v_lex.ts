@@ -7,4 +7,6 @@ export interface VLex {
     ) => ReducedFormType | ReducedFormType[];
 
     get_child_sockets: () => VSocket[];
+
+    get_socket: (socket_id: string) => VSocket | null;
 }

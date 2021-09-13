@@ -76,6 +76,11 @@ export class VDefinition implements VLex {
                         return {
                             tag: ReducedFormTag.TexLine,
                             tex: `${base_tex} ${expr_form.tex}`,
+                            socket_ids: [
+                                ...def_forms[0].socket_ids,
+                                ...def_forms[1].socket_ids,
+                                ...expr_form.socket_ids,
+                            ],
                         };
                     } else {
                         return error_form();
@@ -102,6 +107,16 @@ export class VDefinition implements VLex {
                     pg_index: "1.infty",
                     children,
                 };
+        }
+    };
+
+    get_socket = (socket_id: string) => {
+        const term_def_result = this.term_def.get_socket(socket_id);
+
+        if (!!term_def_result) {
+            return term_def_result;
+        } else {
+            return this.term_expr.get_socket(socket_id);
         }
     };
 

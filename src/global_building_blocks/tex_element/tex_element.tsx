@@ -5,6 +5,26 @@ import { renderToString } from "katex";
 
 const HOVER_COLOR = "#8fcad9";
 
+interface MiniProps {
+    tex: string;
+}
+
+const MiniTex = React.memo<MiniProps>((props) => {
+    return (
+        <div
+            className="tex-container-tex"
+            dangerouslySetInnerHTML={{
+                __html: renderToString(props.tex, {
+                    trust: true,
+                    displayMode: true,
+                    output: "html",
+                    strict: false,
+                }),
+            }}
+        />
+    );
+});
+
 interface Props {
     tex: string;
     termIds: string[];
@@ -65,21 +85,7 @@ const TexElement: React.FC<Props> = (props) => {
         }
     }, [props.showTermHints, props.tex, props.termIds]);
 
-    // return <div>{props.tex}</div>;
-
-    return (
-        <div
-            className="tex-container-tex"
-            dangerouslySetInnerHTML={{
-                __html: renderToString(props.tex, {
-                    trust: true,
-                    displayMode: true,
-                    output: "html",
-                    strict: false,
-                }),
-            }}
-        />
-    );
+    return <MiniTex tex={props.tex} />;
 };
 
 export default React.memo(TexElement, (jax1, jax2) => {

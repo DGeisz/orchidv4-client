@@ -27,8 +27,8 @@ export function text_with_cursor(
     );
 }
 
-export function wrap_css_id(tex: string, css_id: string) {
-    return `{\\htmlId{${css_id}}{${tex}}`;
+export function wrap_html_id(tex: string, html_id: string) {
+    return `\\htmlId{${html_id}}{${tex}}`;
 }
 
 export const LATEX_SPACE = "\\;";

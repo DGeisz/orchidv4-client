@@ -73,11 +73,19 @@ export class VConstant implements VLex {
                     )} ${LATEX_SPACE} ${term_forms[0].tex} : ${
                         term_forms[1].tex
                     }`,
+                    socket_ids: [
+                        ...term_forms[0].socket_ids,
+                        ...term_forms[1].socket_ids,
+                    ],
                 };
         }
     };
 
     get_child_sockets = () => {
         return this.term_def.get_child_sockets();
+    };
+
+    get_socket = (socket_id: string) => {
+        return this.term_def.get_socket(socket_id);
     };
 }

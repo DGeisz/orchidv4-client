@@ -135,9 +135,7 @@ export class VirtualPage implements VSocket {
                         const new_socket = new VDecSocket(dec_socket_ser, this);
 
                         if (before_rel) {
-                            if (r_index > 0) {
-                                this.dec_sockets.splice(r_index, 0, new_socket);
-                            }
+                            this.dec_sockets.splice(r_index, 0, new_socket);
                         } else {
                             this.dec_sockets.splice(r_index + 1, 0, new_socket);
 
@@ -311,6 +309,15 @@ export class VirtualPage implements VSocket {
         });
     };
 
+    select_socket = (socket_id: string) => {
+        const result = this.get_socket(socket_id);
+
+        if (!!result) {
+            this.cursor = result.activate_left_cursor(true);
+            this.process_change();
+        }
+    };
+
     /* The following methods are required for v_sockets */
     get_reduced_form: () => ReducedFormType[] = () => {
         /* If the window isn't in focus, we don't want the
@@ -327,6 +334,18 @@ export class VirtualPage implements VSocket {
     };
 
     get_id = () => this.id;
+
+    get_socket = (socket_id: string) => {
+        for (let socket of this.dec_sockets) {
+            const result = socket.get_socket(socket_id);
+
+            if (!!result) {
+                return result;
+            }
+        }
+
+        return null;
+    };
 
     activate_left_cursor = () => {
         return this.dec_sockets[0].activate_left_cursor(true);

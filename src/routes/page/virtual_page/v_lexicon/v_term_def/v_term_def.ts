@@ -39,8 +39,19 @@ export class VTermDef implements VLex {
                 {
                     tag: ReducedFormTag.TexLine,
                     tex: add_latex_color("ERROR", palette.warning),
+                    socket_ids: [],
                 },
             ];
+        }
+    };
+
+    get_socket = (socket_id: string) => {
+        const term_socket_result = this.term_def_socket.get_socket(socket_id);
+
+        if (!!term_socket_result) {
+            return term_socket_result;
+        } else {
+            return this.type_socket.get_socket(socket_id);
         }
     };
 

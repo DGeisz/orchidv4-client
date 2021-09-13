@@ -2,6 +2,7 @@ import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
 import { VLex } from "../v_lex";
 import { ExprSocketSer } from "../../../page_types/page_serde/lexicon/expression/expr_serialization";
 import {
+    error_form,
     ReducedFormTag,
     ReducedFormType,
 } from "../../../page_types/reduced_form/reduced_form";
@@ -12,8 +13,8 @@ import {
     LATEX_EMPTY_SOCKET,
     LATEX_SPACE,
     text_with_cursor,
+    wrap_html_id,
 } from "../../../utils/latex_utils";
-import { palette } from "../../../../../global_styles/palette";
 
 export class VExprSocket implements VSocket {
     private expression?: VLex;
@@ -63,6 +64,7 @@ export class VExprSocket implements VSocket {
                                                 LATEX_SPACE +
                                                 child_form.tex
                                         ),
+                                        socket_ids: child_form.socket_ids,
                                     };
                                 case CursorSide.Right:
                                     return {
@@ -75,15 +77,13 @@ export class VExprSocket implements VSocket {
                                                     this.cursor_position
                                                 )
                                         ),
+                                        socket_ids: child_form.socket_ids,
                                     };
                             }
                             break;
                         }
                         default:
-                            return {
-                                tag: ReducedFormTag.TexLine,
-                                tex: add_latex_color("ERROR", palette.danger),
-                            };
+                            return error_form();
                     }
                 } else {
                     return child_form;
@@ -92,22 +92,40 @@ export class VExprSocket implements VSocket {
         } else if (cursor_socket_id === this.id) {
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: active_socket_tex(
-                    text_with_cursor(
-                        this.left_entry_value,
-                        this.cursor_position
-                    )
+                tex: wrap_html_id(
+                    active_socket_tex(
+                        text_with_cursor(
+                            this.left_entry_value,
+                            this.cursor_position
+                        )
+                    ),
+                    this.id
                 ),
+                socket_ids: [this.id],
             };
         } else {
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: create_tex_text(
-                    !!this.left_entry_value
-                        ? this.left_entry_value
-                        : LATEX_EMPTY_SOCKET
+                tex: wrap_html_id(
+                    create_tex_text(
+                        !!this.left_entry_value
+                            ? this.left_entry_value
+                            : LATEX_EMPTY_SOCKET
+                    ),
+                    this.id
                 ),
+                socket_ids: [this.id],
             };
+        }
+    };
+
+    get_socket = (socket_id: string) => {
+        if (this.id === socket_id) {
+            return this;
+        } else if (!!this.expression) {
+            return this.expression.get_socket(socket_id);
+        } else {
+            return null;
         }
     };
 
