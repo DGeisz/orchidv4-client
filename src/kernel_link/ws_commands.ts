@@ -20,3 +20,16 @@ export interface FillDecSocketCommand {
         dec_name: string;
     };
 }
+
+export interface AppendDecSocketCommand {
+    AppendDecSocket: {
+        page_id: string;
+    };
+}
+
+export interface DeleteDecSocketCmd {
+    DeleteDecSocket: {
+        page_id: String;
+        socket_id: String;
+    };
+}

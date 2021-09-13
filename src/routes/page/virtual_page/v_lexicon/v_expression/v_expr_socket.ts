@@ -1,7 +1,6 @@
 import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
 import { VLex } from "../v_lex";
 import { ExprSocketSer } from "../../../page_types/page_serde/lexicon/expression/expr_serialization";
-import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
     ReducedFormTag,
     ReducedFormType,
@@ -435,5 +434,19 @@ export class VExprSocket implements VSocket {
         }
     };
 
-    commit_seq = (page_id: string) => {};
+    commit_seq = (_page_id: string) => {};
+
+    check_cursor = () => {
+        return null;
+    };
+
+    contains_id = (id: string) => {
+        if (this.id === id) {
+            return true;
+        } else {
+            return this.get_child_sockets().some((socket) =>
+                socket.contains_id(id)
+            );
+        }
+    };
 }

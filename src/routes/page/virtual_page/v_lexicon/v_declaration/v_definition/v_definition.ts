@@ -17,14 +17,23 @@ import { palette } from "../../../../../../global_styles/palette";
 import { VTermDef } from "../../v_term_def/v_term_def";
 import { VExprSocket } from "../../v_expression/v_expr_socket";
 import { VSocket } from "../../v_socket";
+import { VirtualPage } from "../../../virtual_page";
 
 export class VDefinition implements VLex {
     private readonly variation: DefVariation;
     private term_def: VTermDef;
-    private term_expr: VExprSocket;
+    private readonly term_expr: VExprSocket;
+    private virtual_page: VirtualPage;
 
-    constructor(def_ser: DefSer, parent_socket: VSocket) {
+    constructor(
+        def_ser: DefSer,
+        parent_socket: VSocket,
+
+        virtual_page: VirtualPage
+    ) {
         const { term_def_ser, term_expr_ser, variation } = def_ser;
+
+        this.virtual_page = virtual_page;
         this.variation = variation;
         this.term_def = new VTermDef(term_def_ser, parent_socket);
         this.term_expr = new VExprSocket(term_expr_ser, parent_socket);

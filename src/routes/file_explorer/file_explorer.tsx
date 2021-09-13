@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "./file_explorer_styles.scss";
 import { kernel_link } from "../../kernel_link/kernel_link";
 import { is_new_page, NewPageResponse } from "../../kernel_link/ws_response";
+import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_mode_switch";
 
 /*
  * Initialize the kernel link
@@ -36,6 +37,11 @@ const FileExplorer: React.FC = () => {
 
     return (
         <div className="file-explorer-page">
+            <div className="fe-header">
+                <div className="fe-header-right">
+                    <DarkModeSwitch />
+                </div>
+            </div>
             <div className="new-page-button" onClick={kernel_link.new_page}>
                 New Page
             </div>

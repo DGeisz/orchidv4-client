@@ -23,6 +23,8 @@ export function error_form(): ReducedFormType {
 
 export interface GlobalHeaderType {
     tag: ReducedFormTag.GlobalHeader;
+    /* Fn to be called when you click the x */
+    on_delete?: () => void;
     title: string;
     title_color: string;
     main_tex: string;

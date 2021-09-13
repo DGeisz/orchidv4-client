@@ -1,5 +1,7 @@
 import { WsResponse } from "./ws_response";
 import {
+    AppendDecSocketCommand,
+    DeleteDecSocketCmd,
     FillDecSocketCommand,
     FullPageCommand,
     NewPageCommand,
@@ -24,21 +26,19 @@ class KernelLink {
         }
 
         this.ws = new WebSocket(this.addr);
-        console.log("Just initilized!");
         this.configure_ws();
     }
 
-    reconnect_ws = () => {
+    private reconnect_ws = () => {
         this.ws.onerror = null;
         this.ws.onmessage = null;
         this.ws.onclose = null;
 
-        console.log("reconnecting");
         this.ws = new WebSocket(this.addr);
         this.configure_ws();
     };
 
-    configure_ws = () => {
+    private configure_ws = () => {
         this.ws.onerror = () => {
             this.ws.close();
         };
@@ -52,8 +52,6 @@ class KernelLink {
 
         this.ws.onopen = () => {
             this.ws_open = true;
-
-            console.log("This is send queue", this.send_queue);
 
             for (let msg of this.send_queue) {
                 this.ws.send(msg);
@@ -87,11 +85,13 @@ class KernelLink {
         this.configure_ws();
     };
 
-    send_message = (msg: string) => {
+    private send_message = (msg: any) => {
+        const final = JSON.stringify(msg);
+
         if (this.ws_open) {
-            this.ws.send(msg);
+            this.ws.send(final);
         } else {
-            this.send_queue.push(msg);
+            this.send_queue.push(final);
         }
     };
 
@@ -106,7 +106,7 @@ class KernelLink {
             },
         };
 
-        this.send_message(JSON.stringify(cmd));
+        this.send_message(cmd);
     };
 
     full_page = (page_id: string) => {
@@ -116,7 +116,7 @@ class KernelLink {
             },
         };
 
-        this.send_message(JSON.stringify(cmd));
+        this.send_message(cmd);
     };
 
     get_link_id = () => {
@@ -136,7 +136,28 @@ class KernelLink {
             },
         };
 
-        this.send_message(JSON.stringify(cmd));
+        this.send_message(cmd);
+    };
+
+    append_dec_socket = (page_id: string) => {
+        const cmd: AppendDecSocketCommand = {
+            AppendDecSocket: {
+                page_id,
+            },
+        };
+
+        this.send_message(cmd);
+    };
+
+    delete_dec_socket = (page_id: string, socket_id: string) => {
+        const cmd: DeleteDecSocketCmd = {
+            DeleteDecSocket: {
+                page_id,
+                socket_id,
+            },
+        };
+
+        this.send_message(cmd);
     };
 }
 

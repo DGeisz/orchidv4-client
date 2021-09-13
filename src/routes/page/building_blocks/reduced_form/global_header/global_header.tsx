@@ -17,11 +17,21 @@ const GlobalHeader: React.FC<Props> = (props) => {
     return (
         <div className="gh-container">
             <div className="gh-header">
-                <div
-                    className="gh-title"
-                    style={{ color: global_header.title_color }}
-                >
-                    {global_header.title}
+                <div className="gh-title-container">
+                    <div
+                        className="gh-title"
+                        style={{ color: global_header.title_color }}
+                    >
+                        {global_header.title}
+                    </div>
+                    {!!global_header.on_delete && (
+                        <div
+                            className="gh-delete"
+                            onClick={global_header.on_delete}
+                        >
+                            Delete
+                        </div>
+                    )}
                 </div>
                 <div className="gh-content">
                     <div className="gh-content-left">

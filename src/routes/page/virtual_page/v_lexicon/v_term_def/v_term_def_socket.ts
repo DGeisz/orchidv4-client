@@ -376,4 +376,15 @@ export class VTermDefSocket implements VSocket {
     };
 
     commit_seq = () => {};
+    check_cursor = () => null;
+
+    contains_id = (id: string) => {
+        if (this.id === id) {
+            return true;
+        } else {
+            return this.get_child_sockets().some((socket) =>
+                socket.contains_id(id)
+            );
+        }
+    };
 }

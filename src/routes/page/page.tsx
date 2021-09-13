@@ -47,11 +47,24 @@ const Page: React.FC = () => {
                 {reduced_forms.map((form, index) => (
                     <ReducedForm form={form} key={`${pid}:${index}`} />
                 ))}
+                <div className="pg-footer">
+                    <div
+                        className="pg-add-button"
+                        onClick={() => kernel_link.append_dec_socket(pid)}
+                    >
+                        +
+                    </div>
+                </div>
             </div>
         );
     } else {
         return (
             <div className="loading-page-container">
+                <div className="page-header">
+                    <div className="page-header-right">
+                        <DarkModeSwitch />
+                    </div>
+                </div>
                 <PropagateLoader color={palette.comp_fg_green} size={15} />
             </div>
         );

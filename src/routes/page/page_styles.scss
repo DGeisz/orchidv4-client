@@ -91,3 +91,17 @@ $form-vertical-margin: 15px;
 .hide-button:hover {
     opacity: 100%;
 }
+
+.pg-footer {
+}
+
+.pg-add-button {
+    @extend %smooth-transition;
+    font-size: 20pt;
+    color: $comp-fg-hover;
+    cursor: pointer;
+}
+
+.pg-add-button:hover {
+    color: $comp-fg-green;
+}

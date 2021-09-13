@@ -11,9 +11,28 @@
 .gh-header {
 }
 
+.gh-title-container {
+    @extend %flexRow;
+    align-items: flex-end;
+}
+
 .gh-title {
     @extend %jax-main;
     font-size: 15pt;
+}
+
+.gh-delete {
+    @extend %smooth-transition;
+    @extend %jax-main;
+    font-size: 10pt;
+    color: $danger;
+    opacity: 0.1;
+    margin: 0 0 3px 10px;
+    cursor: pointer;
+}
+
+.gh-delete:hover {
+    opacity: 1;
 }
 
 .gh-content {

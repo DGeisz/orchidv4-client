@@ -23,11 +23,12 @@ import {
     text_with_cursor,
 } from "../../../utils/latex_utils";
 import { palette } from "../../../../../global_styles/palette";
+import { VirtualPage } from "../../virtual_page";
 
 export class VDecSocket implements VSocket {
     private declaration?: VLex;
     private readonly id: string;
-    private readonly parent_socket: VSocket;
+    private readonly virtual_page: VirtualPage;
 
     /*
      * Next fields are for cursor position
@@ -37,16 +38,24 @@ export class VDecSocket implements VSocket {
     private right_entry_value: string = "";
     private cursor_position: number = 0;
 
-    constructor(dec_socket_ser: DecSocketSer, parent_socket: VSocket) {
+    constructor(dec_socket_ser: DecSocketSer, virtual_page: VirtualPage) {
         const { id, dec_ser } = dec_socket_ser;
         this.id = id;
-        this.parent_socket = parent_socket;
+        this.virtual_page = virtual_page;
 
         if (is_some(dec_ser)) {
             if (is_const(dec_ser)) {
-                this.declaration = new VConstant(dec_ser.Const, this);
+                this.declaration = new VConstant(
+                    dec_ser.Const,
+                    this,
+                    this.virtual_page
+                );
             } else {
-                this.declaration = new VDefinition(dec_ser.Def, this);
+                this.declaration = new VDefinition(
+                    dec_ser.Def,
+                    this,
+                    this.virtual_page
+                );
             }
         }
     }
@@ -57,9 +66,17 @@ export class VDecSocket implements VSocket {
                 const { dec_ser } = dec_socket_ser;
 
                 if (is_const(dec_ser)) {
-                    this.declaration = new VConstant(dec_ser.Const, this);
+                    this.declaration = new VConstant(
+                        dec_ser.Const,
+                        this,
+                        this.virtual_page
+                    );
                 } else if (is_def(dec_ser)) {
-                    this.declaration = new VDefinition(dec_ser.Def, this);
+                    this.declaration = new VDefinition(
+                        dec_ser.Def,
+                        this,
+                        this.virtual_page
+                    );
                 }
 
                 this.left_entry_value = "";
@@ -291,7 +308,7 @@ export class VDecSocket implements VSocket {
              * First we get the parent children, because
              * we want to get the next child in line
              */
-            const parent_children = this.parent_socket.get_child_sockets();
+            const parent_children = this.virtual_page.get_child_sockets();
 
             console.log("Here are parent children", parent_children);
 
@@ -311,9 +328,7 @@ export class VDecSocket implements VSocket {
              */
             if (self_index < 0 || self_index === parent_children.length - 1) {
                 /* We're coming from the left (cause we're inside) */
-                return cursor_moved(
-                    this.parent_socket.activate_right_cursor(true)
-                );
+                return cursor_moved(this.virtual_page.activate_right_cursor());
             } else {
                 /* Otherwise, we push to the next child */
                 const next_socket = parent_children[self_index + 1];
@@ -400,7 +415,7 @@ export class VDecSocket implements VSocket {
                      * our parent's children
                      */
                     const parent_children =
-                        this.parent_socket.get_child_sockets();
+                        this.virtual_page.get_child_sockets();
 
                     /* Figure out our place in the children */
                     const self_index = parent_children
@@ -416,7 +431,7 @@ export class VDecSocket implements VSocket {
                      */
                     if (self_index < 1) {
                         return cursor_moved(
-                            this.parent_socket.activate_left_cursor(false)
+                            this.virtual_page.activate_left_cursor()
                         );
                     } else {
                         /*
@@ -471,5 +486,42 @@ export class VDecSocket implements VSocket {
 
     commit_seq = (page_id: string) => {
         kernel_link.fill_dec_socket(page_id, this.id, this.left_entry_value);
+    };
+
+    check_cursor = () => {
+        /* If this socket is filled and still
+         * has the cursor, we pass the cursor down
+         * to the most appropriate child, if there
+         * are any */
+        if (!!this.declaration) {
+            const children = this.get_child_sockets();
+
+            if (children.length > 0) {
+                switch (this.cursor_side) {
+                    case CursorSide.Left:
+                        this.left_entry_value = "";
+                        return children[0].activate_left_cursor(true);
+                    case CursorSide.Right:
+                        this.right_entry_value = "";
+                        return children[
+                            children.length - 1
+                        ].activate_right_cursor(false);
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    };
+
+    contains_id = (id: string) => {
+        if (this.id === id) {
+            return true;
+        } else {
+            return this.get_child_sockets().some((socket) =>
+                socket.contains_id(id)
+            );
+        }
     };
 }

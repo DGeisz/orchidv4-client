@@ -1,4 +1,6 @@
 import {
+    is_dec_socket_append,
+    is_dec_socket_delete,
     is_dec_socket_update,
     is_full_page,
     WsResponse,
@@ -14,6 +16,7 @@ import {
     ALLOWED_NON_ALPHA_NUMERIC_CHARS,
     CURSOR_NAME,
 } from "../utils/latex_utils";
+import { kernel_link } from "../../../kernel_link/kernel_link";
 
 /* This is just for debugging purposes.
  * If set to false, the cursor keeps blinking
@@ -55,6 +58,13 @@ export class VirtualPage implements VSocket {
     }
 
     process_change = () => {
+        if (!!this.cursor) {
+            const new_cursor = this.cursor.check_cursor();
+            if (!!new_cursor) {
+                this.cursor = new_cursor;
+            }
+        }
+
         this.set_reduced_forms(this.get_reduced_form());
         this.restart_cursor();
     };
@@ -76,9 +86,7 @@ export class VirtualPage implements VSocket {
                     (dec) => new VDecSocket(dec, this)
                 );
 
-                /* Let the first dec socket be the current cursor
-                 * if the current cursor isn't defined */
-                if (!this.cursor) {
+                if (!this.cursor && this.dec_sockets.length > 0) {
                     this.cursor =
                         this.dec_sockets[0].activate_left_cursor(true);
                 }
@@ -97,6 +105,38 @@ export class VirtualPage implements VSocket {
                 );
 
                 !!socket && socket.update(dec_socket_ser);
+                this.process_change();
+            }
+        }
+
+        if (is_dec_socket_append(res)) {
+            const { page_id, dec_socket_ser } = res.DecSocketAppend;
+
+            if (page_id === this.id) {
+                /* Create and append a new virtual dec socket */
+                this.dec_sockets.push(new VDecSocket(dec_socket_ser, this));
+
+                /* If this is the first dec socket we received,
+                 * make it the cursor */
+                if (this.dec_sockets.length === 1) {
+                    this.cursor = this.dec_sockets[0];
+                }
+
+                this.process_change();
+            }
+        }
+
+        if (is_dec_socket_delete(res)) {
+            const { page_id, dec_socket_id } = res.DecSocketDelete;
+
+            if (page_id === this.id) {
+                /* Get rid of socket with dec_socket_id */
+                this.dec_sockets = this.dec_sockets.filter(
+                    (socket) => socket.get_id() !== dec_socket_id
+                );
+
+                /*TODO figure out what to do with cursor*/
+
                 this.process_change();
             }
         }
@@ -246,4 +286,19 @@ export class VirtualPage implements VSocket {
 
     get_child_sockets = () => this.dec_sockets;
     commit_seq = () => {};
+    check_cursor = () => null;
+
+    contains_id = (id: string) => {
+        if (this.id === id) {
+            return true;
+        } else {
+            return this.get_child_sockets().some((socket) =>
+                socket.contains_id(id)
+            );
+        }
+    };
+
+    delete_dec_socket = (socket_id: string) => {
+        kernel_link.delete_dec_socket(this.id, socket_id);
+    };
 }
