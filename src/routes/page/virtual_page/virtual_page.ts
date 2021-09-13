@@ -249,7 +249,25 @@ export class VirtualPage implements VSocket {
 
                         break;
                     }
+                    case "ArrowUp": {
+                        const response = this.cursor.move_cursor_previous();
+
+                        if (response.tag === CursorResponseTag.MoveSocket) {
+                            this.cursor = response.new_socket;
+                        }
+
+                        break;
+                    }
                     case "ArrowRight": {
+                        const response = this.cursor.move_cursor_next();
+
+                        if (response.tag === CursorResponseTag.MoveSocket) {
+                            this.cursor = response.new_socket;
+                        }
+
+                        break;
+                    }
+                    case "ArrowDown": {
                         const response = this.cursor.move_cursor_next();
 
                         if (response.tag === CursorResponseTag.MoveSocket) {
