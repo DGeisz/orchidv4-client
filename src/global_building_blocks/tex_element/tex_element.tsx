@@ -27,16 +27,16 @@ const MiniTex = React.memo<MiniProps>((props) => {
 
 interface Props {
     tex: string;
-    termIds: string[];
-    selectTerm?: (id: string) => void;
-    showTermHints?: boolean;
+    term_ids: string[];
+    select_socket?: (id: string) => void;
+    show_term_hints?: boolean;
 }
 
 const TexElement: React.FC<Props> = (props) => {
     const [termHints, setTermHints] = useState<HTMLDivElement[]>([]);
 
     useEffect(() => {
-        props.termIds.forEach((id) => {
+        props.term_ids.forEach((id) => {
             let tex_node = document.getElementById(id);
 
             if (!!tex_node) {
@@ -47,7 +47,7 @@ const TexElement: React.FC<Props> = (props) => {
                 tex_node.style.position = "relative";
 
                 tex_node.onmousedown = () =>
-                    !!props.selectTerm && props.selectTerm(id);
+                    !!props.select_socket && props.select_socket(id);
 
                 tex_node.onmouseover = () => {
                     if (!!tex_node) {
@@ -67,11 +67,11 @@ const TexElement: React.FC<Props> = (props) => {
     useEffect(() => {
         termHints.forEach((hint) => hint.remove());
 
-        if (!!props.showTermHints) {
-            const hints = hint_strings(props.termIds.length);
+        if (!!props.show_term_hints) {
+            const hints = hint_strings(props.term_ids.length);
             const newTermHints: HTMLDivElement[] = [];
 
-            props.termIds.forEach((id, index) => {
+            props.term_ids.forEach((id, index) => {
                 let tex_node = document.getElementById(id);
 
                 if (!!tex_node) {
@@ -83,13 +83,15 @@ const TexElement: React.FC<Props> = (props) => {
 
             setTermHints(newTermHints);
         }
-    }, [props.showTermHints, props.tex, props.termIds]);
+    }, [props.show_term_hints, props.tex, props.term_ids]);
 
     return <MiniTex tex={props.tex} />;
 };
 
 export default React.memo(TexElement, (jax1, jax2) => {
-    return jax1.tex === jax2.tex && jax1.showTermHints === jax2.showTermHints;
+    return (
+        jax1.tex === jax2.tex && jax1.show_term_hints === jax2.show_term_hints
+    );
 });
 
 export function genTermHint(hint: string): HTMLDivElement {

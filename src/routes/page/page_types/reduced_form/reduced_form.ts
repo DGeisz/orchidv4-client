@@ -28,7 +28,9 @@ export interface GlobalHeaderType {
     title: string;
     title_color: string;
     main_tex: string;
+    main_socket_ids: string[];
     label: string;
+    label_socket_ids: string[];
     pg_index: string;
     children: ReducedFormType[];
     left_cursor_active?: boolean;
@@ -39,8 +41,10 @@ export interface GlobalHeaderType {
 export interface SurroundIndentType {
     tag: ReducedFormTag.SurroundIndent;
     header_tex: string;
+    header_socket_ids: string[];
     children: ReducedFormType[];
     footer_tex: string;
+    footer_socket_ids: string[];
     body_name: string;
     label?: string;
     pg_index?: string;
@@ -49,15 +53,19 @@ export interface SurroundIndentType {
 export interface InlinePropType {
     tag: ReducedFormTag.InlineProp;
     prop: string;
+    prop_socket_ids: string[];
     explanation: string;
     label: string;
+    label_socket_ids: string[];
     pg_index: string;
 }
 
 export interface LambdaPropType {
     tag: ReducedFormTag.LambdaProp;
     intro_tex: string;
+    intro_socket_ids: string[];
     label: string;
+    label_socket_ids: string[];
     pg_index: string;
     children: ReducedFormType[];
 }

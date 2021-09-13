@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./surround_index_styles.scss";
 import ReducedForm from "../reduced_form";
 import { SurroundIndentType } from "../../../page_types/reduced_form/reduced_form";
 import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
+import { PageContext } from "../../../page_context";
 
 interface Props {
     surround_indent: SurroundIndentType;
@@ -10,6 +11,7 @@ interface Props {
 
 const SurroundIndent: React.FC<Props> = (props) => {
     const { surround_indent } = props;
+    const { select_socket } = useContext(PageContext);
 
     const [body_visible, show_body] = useState<boolean>(true);
 
@@ -17,7 +19,11 @@ const SurroundIndent: React.FC<Props> = (props) => {
         <div className="si-container">
             <div className="si-header">
                 <div className="si-header-left">
-                    <TexElement tex={surround_indent.header_tex} termIds={[]} />
+                    <TexElement
+                        tex={surround_indent.header_tex}
+                        term_ids={surround_indent.header_socket_ids}
+                        select_socket={select_socket}
+                    />
                 </div>
                 <div className="si-header-right">
                     {body_visible && (
@@ -48,7 +54,11 @@ const SurroundIndent: React.FC<Props> = (props) => {
             </div>
             <div className="si-footer">
                 <div className="si-footer-left">
-                    <TexElement tex={surround_indent.footer_tex} termIds={[]} />
+                    <TexElement
+                        tex={surround_indent.footer_tex}
+                        term_ids={surround_indent.footer_socket_ids}
+                        select_socket={select_socket}
+                    />
                 </div>
                 <div className="si-footer-right">
                     {!!surround_indent.label && (

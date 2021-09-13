@@ -16,8 +16,8 @@ const TexLine: React.FC<Props> = (props) => {
         <div className="tex-container">
             <TexElement
                 tex={tex}
-                termIds={socket_ids}
-                selectTerm={select_socket}
+                term_ids={socket_ids}
+                select_socket={select_socket}
             />
         </div>
     );

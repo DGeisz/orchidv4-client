@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./global_header_styles.scss";
 import "../../../page_styles.scss";
 import ReducedForm from "../reduced_form";
 import { GlobalHeaderType } from "../../../page_types/reduced_form/reduced_form";
 import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
+import { PageContext } from "../../../page_context";
 
 interface Props {
     global_header: GlobalHeaderType;
@@ -11,6 +12,7 @@ interface Props {
 
 const GlobalHeader: React.FC<Props> = (props) => {
     const { global_header } = props;
+    const { select_socket } = useContext(PageContext);
 
     const [show_proof, set_proof_visible] = useState<boolean>(true);
 
@@ -36,14 +38,16 @@ const GlobalHeader: React.FC<Props> = (props) => {
                         <div className="gh-content-left">
                             <TexElement
                                 tex={global_header.main_tex}
-                                termIds={[]}
+                                term_ids={global_header.main_socket_ids}
+                                select_socket={select_socket}
                             />
                         </div>
                         <div className="gh-content-right">
                             <div className="pg-label">
                                 <TexElement
                                     tex={global_header.label}
-                                    termIds={[]}
+                                    term_ids={global_header.label_socket_ids}
+                                    select_socket={select_socket}
                                 />
                             </div>
                             <div className="pg-index">
