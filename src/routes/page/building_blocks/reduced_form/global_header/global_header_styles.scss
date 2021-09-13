@@ -3,8 +3,23 @@
 @import "src/global_styles/basic_layout";
 @import "../../../page_styles";
 
+.gh-outer-container {
+    @extend %flexRow;
+}
+
+.gh-left-cursor {
+    margin-right: 6px;
+    border-left: solid 1px $hardGray;
+}
+
+.gh-right-cursor {
+    margin-left: 6px;
+    border-left: solid 1px $hardGray;
+}
+
 .gh-container {
     @extend %proof-border;
+    @extend %flexGrid1;
     margin: $form-vertical-margin 0;
 }
 
@@ -19,20 +34,6 @@
 .gh-title {
     @extend %jax-main;
     font-size: 15pt;
-}
-
-.gh-delete {
-    @extend %smooth-transition;
-    @extend %jax-main;
-    font-size: 10pt;
-    color: $danger;
-    opacity: 0.1;
-    margin: 0 0 3px 10px;
-    cursor: pointer;
-}
-
-.gh-delete:hover {
-    opacity: 1;
 }
 
 .gh-content {

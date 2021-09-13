@@ -1,11 +1,5 @@
 import { WsResponse } from "./ws_response";
-import {
-    AppendDecSocketCommand,
-    DeleteDecSocketCmd,
-    FillDecSocketCommand,
-    FullPageCommand,
-    NewPageCommand,
-} from "./ws_commands";
+import { DecSocketCmd, FullPageCmd, NewPageCmd } from "./ws_commands";
 import { v4 } from "uuid";
 
 class KernelLink {
@@ -100,7 +94,7 @@ class KernelLink {
      * requests to be sent to the server
      */
     new_page = () => {
-        const cmd: NewPageCommand = {
+        const cmd: NewPageCmd = {
             NewPage: {
                 target_client: this.link_id,
             },
@@ -110,7 +104,7 @@ class KernelLink {
     };
 
     full_page = (page_id: string) => {
-        const cmd: FullPageCommand = {
+        const cmd: FullPageCmd = {
             FullPage: {
                 page_id,
             },
@@ -128,11 +122,15 @@ class KernelLink {
         socket_id: string,
         dec_name: string
     ) => {
-        const cmd: FillDecSocketCommand = {
-            FillDecSocket: {
+        const cmd: DecSocketCmd = {
+            DecSocket: {
                 page_id,
-                socket_id,
-                dec_name,
+                cmd: {
+                    Fill: {
+                        socket_id,
+                        dec_name,
+                    },
+                },
             },
         };
 
@@ -140,9 +138,10 @@ class KernelLink {
     };
 
     append_dec_socket = (page_id: string) => {
-        const cmd: AppendDecSocketCommand = {
-            AppendDecSocket: {
+        const cmd: DecSocketCmd = {
+            DecSocket: {
                 page_id,
+                cmd: "Append",
             },
         };
 
@@ -150,10 +149,49 @@ class KernelLink {
     };
 
     delete_dec_socket = (page_id: string, socket_id: string) => {
-        const cmd: DeleteDecSocketCmd = {
-            DeleteDecSocket: {
+        const cmd: DecSocketCmd = {
+            DecSocket: {
                 page_id,
-                socket_id,
+                cmd: {
+                    Delete: {
+                        socket_id,
+                    },
+                },
+            },
+        };
+
+        this.send_message(cmd);
+    };
+
+    delete_dec_socket_contents = (page_id: string, socket_id: string) => {
+        const cmd: DecSocketCmd = {
+            DecSocket: {
+                page_id,
+                cmd: {
+                    DeleteContents: {
+                        socket_id,
+                    },
+                },
+            },
+        };
+
+        this.send_message(cmd);
+    };
+
+    insert_dec_socket = (
+        page_id: string,
+        rel_socket_id: string,
+        before_rel: boolean
+    ) => {
+        const cmd: DecSocketCmd = {
+            DecSocket: {
+                page_id,
+                cmd: {
+                    Insert: {
+                        rel_socket_id,
+                        before_rel,
+                    },
+                },
             },
         };
 

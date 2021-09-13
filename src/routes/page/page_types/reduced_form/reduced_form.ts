@@ -23,14 +23,15 @@ export function error_form(): ReducedFormType {
 
 export interface GlobalHeaderType {
     tag: ReducedFormTag.GlobalHeader;
-    /* Fn to be called when you click the x */
-    on_delete?: () => void;
     title: string;
     title_color: string;
     main_tex: string;
     label: string;
     pg_index: string;
     children: ReducedFormType[];
+    left_cursor_active?: boolean;
+    right_cursor_active?: boolean;
+    background_color?: string;
 }
 
 export interface SurroundIndentType {

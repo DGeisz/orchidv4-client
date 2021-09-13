@@ -16,6 +16,7 @@ import { VLex } from "../v_lex";
 import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
     active_socket_tex,
+    add_color_box,
     add_latex_color,
     create_tex_text,
     LATEX_EMPTY_SOCKET,
@@ -37,6 +38,9 @@ export class VDecSocket implements VSocket {
     private left_entry_value: string = "";
     private right_entry_value: string = "";
     private cursor_position: number = 0;
+
+    /* For priming delete */
+    private delete_prime_count: number = 0;
 
     constructor(dec_socket_ser: DecSocketSer, virtual_page: VirtualPage) {
         const { id, dec_ser } = dec_socket_ser;
@@ -78,17 +82,24 @@ export class VDecSocket implements VSocket {
                         this.virtual_page
                     );
                 }
-
-                this.left_entry_value = "";
-                this.right_entry_value = "";
-                this.cursor_position = 0;
+            } else {
+                this.declaration = undefined;
             }
+
+            this.left_entry_value = "";
+            this.right_entry_value = "";
+            this.cursor_position = 0;
         }
     };
 
     get_reduced_form: (cursor_socket_id: string) => ReducedFormType = (
         cursor_socket_id: string
     ) => {
+        /* First decrease the prime count */
+        if (this.delete_prime_count > 0) {
+            this.delete_prime_count--;
+        }
+
         if (!!this.declaration) {
             const child_form =
                 this.declaration.get_reduced_form(cursor_socket_id);
@@ -97,30 +108,59 @@ export class VDecSocket implements VSocket {
                 if (cursor_socket_id === this.id) {
                     switch (child_form.tag) {
                         case ReducedFormTag.TexLine: {
+                            const bg_color =
+                                this.delete_prime_count > 0
+                                    ? palette.danger_hover
+                                    : palette.socket_active_blue;
+
                             switch (this.cursor_side) {
                                 case CursorSide.Left:
                                     return {
                                         tag: ReducedFormTag.TexLine,
-                                        tex: active_socket_tex(
+                                        tex: add_color_box(
                                             text_with_cursor(
                                                 this.left_entry_value,
                                                 this.cursor_position
                                             ) +
                                                 LATEX_SPACE +
-                                                child_form.tex
+                                                child_form.tex,
+                                            bg_color
                                         ),
                                     };
                                 case CursorSide.Right:
                                     return {
                                         tag: ReducedFormTag.TexLine,
-                                        tex: active_socket_tex(
+                                        tex: add_color_box(
                                             child_form.tex +
                                                 LATEX_SPACE +
                                                 text_with_cursor(
                                                     this.right_entry_value,
                                                     this.cursor_position
-                                                )
+                                                ),
+                                            bg_color
                                         ),
+                                    };
+                            }
+                            break;
+                        }
+                        case ReducedFormTag.GlobalHeader: {
+                            const background_color =
+                                this.delete_prime_count > 0
+                                    ? palette.danger_hover
+                                    : undefined;
+
+                            switch (this.cursor_side) {
+                                case CursorSide.Left:
+                                    return {
+                                        ...child_form,
+                                        left_cursor_active: true,
+                                        background_color,
+                                    };
+                                case CursorSide.Right:
+                                    return {
+                                        ...child_form,
+                                        right_cursor_active: true,
+                                        background_color,
                                     };
                             }
                             break;
@@ -277,6 +317,10 @@ export class VDecSocket implements VSocket {
                         ) + this.left_entry_value.slice(this.cursor_position);
 
                     this.cursor_position--;
+                } else {
+                    if (!this.declaration) {
+                        this.virtual_page.delete_dec_socket(this.id);
+                    }
                 }
                 break;
             }
@@ -289,6 +333,12 @@ export class VDecSocket implements VSocket {
                         ) + this.right_entry_value.slice(this.cursor_position);
 
                     this.cursor_position--;
+                } else {
+                    if (this.delete_prime_count === 0) {
+                        this.delete_prime_count = 2;
+                    } else {
+                        this.virtual_page.delete_dec_socket_contents(this.id);
+                    }
                 }
                 break;
             }
@@ -485,7 +535,28 @@ export class VDecSocket implements VSocket {
     };
 
     commit_seq = (page_id: string) => {
-        kernel_link.fill_dec_socket(page_id, this.id, this.left_entry_value);
+        if (!this.declaration) {
+            if (!!this.left_entry_value) {
+                kernel_link.fill_dec_socket(
+                    page_id,
+                    this.id,
+                    this.left_entry_value
+                );
+            } else {
+                this.virtual_page.insert_dec_socket(this.id, true);
+            }
+        } else {
+            switch (this.cursor_side) {
+                case CursorSide.Left: {
+                    this.virtual_page.insert_dec_socket(this.id, true);
+                    break;
+                }
+                case CursorSide.Right: {
+                    this.virtual_page.insert_dec_socket(this.id, false);
+                    break;
+                }
+            }
+        }
     };
 
     check_cursor = () => {
@@ -494,22 +565,23 @@ export class VDecSocket implements VSocket {
          * to the most appropriate child, if there
          * are any */
         if (!!this.declaration) {
-            const children = this.get_child_sockets();
-
-            if (children.length > 0) {
-                switch (this.cursor_side) {
-                    case CursorSide.Left:
-                        this.left_entry_value = "";
-                        return children[0].activate_left_cursor(true);
-                    case CursorSide.Right:
-                        this.right_entry_value = "";
-                        return children[
-                            children.length - 1
-                        ].activate_right_cursor(false);
-                }
-            } else {
-                return null;
-            }
+            return null;
+            // const children = this.get_child_sockets();
+            //
+            // if (children.length > 0) {
+            //     switch (this.cursor_side) {
+            //         case CursorSide.Left:
+            //             this.left_entry_value = "";
+            //             return children[0].activate_left_cursor(true);
+            //         case CursorSide.Right:
+            //             this.right_entry_value = "";
+            //             return children[
+            //                 children.length - 1
+            //             ].activate_right_cursor(false);
+            //     }
+            // } else {
+            //     return null;
+            // }
         } else {
             return null;
         }

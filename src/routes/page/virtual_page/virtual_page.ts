@@ -1,7 +1,9 @@
 import {
-    is_dec_socket_append,
-    is_dec_socket_delete,
-    is_dec_socket_update,
+    is_dec_append,
+    is_dec_delete,
+    is_dec_insert,
+    is_dec_socket_res,
+    is_dec_update,
     is_full_page,
     WsResponse,
 } from "../../../kernel_link/ws_response";
@@ -95,70 +97,89 @@ export class VirtualPage implements VSocket {
             }
         }
 
-        if (is_dec_socket_update(res)) {
-            const { page_id, dec_socket_ser } = res.DecSocketUpdate;
+        if (is_dec_socket_res(res)) {
+            const { page_id, res: dec_res } = res.DecSocket;
 
+            /* Make sure this is the right page */
             if (page_id === this.id) {
-                /* Find the socket in question */
-                const socket = this.dec_sockets.find(
-                    (socket) => socket.get_id() === dec_socket_ser.id
-                );
+                /* Match on update*/
+                if (is_dec_update(dec_res)) {
+                    const { dec_socket_ser } = dec_res.Update;
 
-                !!socket && socket.update(dec_socket_ser);
-                this.process_change();
-            }
-        }
+                    const socket = this.dec_sockets.find(
+                        (socket) => socket.get_id() === dec_socket_ser.id
+                    );
 
-        if (is_dec_socket_append(res)) {
-            const { page_id, dec_socket_ser } = res.DecSocketAppend;
+                    !!socket && socket.update(dec_socket_ser);
+                } else if (is_dec_append(dec_res)) {
+                    /* Match on append */
+                    const { dec_socket_ser } = dec_res.Append;
 
-            if (page_id === this.id) {
-                /* Create and append a new virtual dec socket */
-                this.dec_sockets.push(new VDecSocket(dec_socket_ser, this));
+                    this.dec_sockets.push(new VDecSocket(dec_socket_ser, this));
 
-                this.cursor =
-                    this.dec_sockets[
-                        this.dec_sockets.length - 1
-                    ].activate_left_cursor(true);
+                    this.cursor =
+                        this.dec_sockets[
+                            this.dec_sockets.length - 1
+                        ].activate_left_cursor(true);
+                } else if (is_dec_insert(dec_res)) {
+                    /* Match on insert */
+                    const { dec_socket_ser, rel_socket_id, before_rel } =
+                        dec_res.Insert;
 
-                this.process_change();
-            }
-        }
+                    /* Get the index of the rel socket */
+                    const r_index = this.dec_sockets.findIndex(
+                        (socket) => socket.get_id() === rel_socket_id
+                    );
 
-        if (is_dec_socket_delete(res)) {
-            const { page_id, dec_socket_id } = res.DecSocketDelete;
+                    if (r_index >= 0) {
+                        const new_socket = new VDecSocket(dec_socket_ser, this);
 
-            if (page_id === this.id) {
-                /* Get index of appropriate socket*/
-                const s_index = this.dec_sockets.findIndex(
-                    (socket) => socket.get_id() === dec_socket_id
-                );
-
-                if (s_index >= 0) {
-                    /* Figure out where the cursor should go */
-                    if (s_index === 0) {
-                        if (this.dec_sockets.length === 1) {
-                            /* If there's only one dec socket, there's
-                             * no where for the cursor to go once it's been
-                             * deleted */
-                            this.cursor = undefined;
+                        if (before_rel) {
+                            if (r_index > 0) {
+                                this.dec_sockets.splice(r_index, 0, new_socket);
+                            }
                         } else {
-                            this.cursor =
-                                this.dec_sockets[1].activate_left_cursor(true);
+                            this.dec_sockets.splice(r_index + 1, 0, new_socket);
+
+                            this.cursor = new_socket.activate_left_cursor(true);
                         }
-                    } else {
-                        /* Set cursor to the dec socket previous to this socket */
-                        this.cursor =
-                            this.dec_sockets[s_index - 1].activate_right_cursor(
-                                false
-                            );
                     }
+                } else if (is_dec_delete(dec_res)) {
+                    const { dec_socket_id } = dec_res.Delete;
 
-                    /* Now get rid of this bad boi */
-                    this.dec_sockets.splice(s_index, 1);
+                    /* Get index of appropriate socket*/
+                    const s_index = this.dec_sockets.findIndex(
+                        (socket) => socket.get_id() === dec_socket_id
+                    );
 
-                    this.process_change();
+                    if (s_index >= 0) {
+                        /* Figure out where the cursor should go */
+                        if (s_index === 0) {
+                            if (this.dec_sockets.length === 1) {
+                                /* If there's only one dec socket, there's
+                                 * no where for the cursor to go once it's been
+                                 * deleted */
+                                this.cursor = undefined;
+                            } else {
+                                this.cursor =
+                                    this.dec_sockets[1].activate_left_cursor(
+                                        true
+                                    );
+                            }
+                        } else {
+                            /* Set cursor to the dec socket previous to this socket */
+                            this.cursor =
+                                this.dec_sockets[
+                                    s_index - 1
+                                ].activate_right_cursor(false);
+                        }
+
+                        /* Now get rid of this bad boi */
+                        this.dec_sockets.splice(s_index, 1);
+                    }
                 }
+
+                this.process_change();
             }
         }
     };
@@ -321,5 +342,13 @@ export class VirtualPage implements VSocket {
 
     delete_dec_socket = (socket_id: string) => {
         kernel_link.delete_dec_socket(this.id, socket_id);
+    };
+
+    insert_dec_socket = (rel_socket_id: string, before_rel: boolean) => {
+        kernel_link.insert_dec_socket(this.id, rel_socket_id, before_rel);
+    };
+
+    delete_dec_socket_contents = (socket_id: string) => {
+        kernel_link.delete_dec_socket_contents(this.id, socket_id);
     };
 }
