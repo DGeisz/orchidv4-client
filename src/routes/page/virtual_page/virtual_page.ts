@@ -116,11 +116,10 @@ export class VirtualPage implements VSocket {
                 /* Create and append a new virtual dec socket */
                 this.dec_sockets.push(new VDecSocket(dec_socket_ser, this));
 
-                /* If this is the first dec socket we received,
-                 * make it the cursor */
-                if (this.dec_sockets.length === 1) {
-                    this.cursor = this.dec_sockets[0];
-                }
+                this.cursor =
+                    this.dec_sockets[
+                        this.dec_sockets.length - 1
+                    ].activate_left_cursor(true);
 
                 this.process_change();
             }
@@ -130,14 +129,36 @@ export class VirtualPage implements VSocket {
             const { page_id, dec_socket_id } = res.DecSocketDelete;
 
             if (page_id === this.id) {
-                /* Get rid of socket with dec_socket_id */
-                this.dec_sockets = this.dec_sockets.filter(
-                    (socket) => socket.get_id() !== dec_socket_id
+                /* Get index of appropriate socket*/
+                const s_index = this.dec_sockets.findIndex(
+                    (socket) => socket.get_id() === dec_socket_id
                 );
 
-                /*TODO figure out what to do with cursor*/
+                if (s_index >= 0) {
+                    /* Figure out where the cursor should go */
+                    if (s_index === 0) {
+                        if (this.dec_sockets.length === 1) {
+                            /* If there's only one dec socket, there's
+                             * no where for the cursor to go once it's been
+                             * deleted */
+                            this.cursor = undefined;
+                        } else {
+                            this.cursor =
+                                this.dec_sockets[1].activate_left_cursor(true);
+                        }
+                    } else {
+                        /* Set cursor to the dec socket previous to this socket */
+                        this.cursor =
+                            this.dec_sockets[s_index - 1].activate_right_cursor(
+                                false
+                            );
+                    }
 
-                this.process_change();
+                    /* Now get rid of this bad boi */
+                    this.dec_sockets.splice(s_index, 1);
+
+                    this.process_change();
+                }
             }
         }
     };
