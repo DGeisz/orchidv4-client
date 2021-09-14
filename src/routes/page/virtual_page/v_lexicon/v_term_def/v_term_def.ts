@@ -11,8 +11,8 @@ import { add_latex_color } from "../../../utils/latex_utils";
 import { palette } from "../../../../../global_styles/palette";
 
 export class VTermDef implements VLex {
-    private term_def_socket: VTermDefSocket;
-    private type_socket: VExprSocket;
+    private readonly term_def_socket: VTermDefSocket;
+    private readonly type_socket: VExprSocket;
 
     constructor(term_def_ser: TermDefSer, parent_socket: VSocket) {
         const { term_def_socket_ser, type_socket_ser } = term_def_ser;

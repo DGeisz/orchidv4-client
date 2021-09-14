@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./tex_element_styles.scss";
-import { hint_strings } from "../../global_utils/vimium_hints";
 import { renderToString } from "katex";
 import { SocketId } from "../../routes/page/page_types/reduced_form/reduced_form";
 
