@@ -90,4 +90,12 @@ export class VConstant implements VLex {
     get_socket = (socket_id: string) => {
         return this.term_def.get_socket(socket_id);
     };
+
+    num_selectable_sockets = () => {
+        return this.term_def.num_selectable_sockets();
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        return this.term_def.label_selectable_sockets(labels);
+    };
 }

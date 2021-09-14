@@ -5,8 +5,9 @@ export interface VLex {
     get_reduced_form: (
         cursor_socket_id: string
     ) => ReducedFormType | ReducedFormType[];
-
     get_child_sockets: () => VSocket[];
-
     get_socket: (socket_id: string) => VSocket | null;
+
+    num_selectable_sockets: () => number;
+    label_selectable_sockets: (labels: string[]) => string[];
 }

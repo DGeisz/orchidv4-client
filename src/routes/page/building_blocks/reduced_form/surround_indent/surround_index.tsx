@@ -11,7 +11,7 @@ interface Props {
 
 const SurroundIndent: React.FC<Props> = (props) => {
     const { surround_indent } = props;
-    const { select_socket } = useContext(PageContext);
+    const { select_socket, select_mode, select_seq } = useContext(PageContext);
 
     const [body_visible, show_body] = useState<boolean>(true);
 
@@ -23,6 +23,8 @@ const SurroundIndent: React.FC<Props> = (props) => {
                         tex={surround_indent.header_tex}
                         term_ids={surround_indent.header_socket_ids}
                         select_socket={select_socket}
+                        show_term_hints={select_mode}
+                        select_seq={select_seq}
                     />
                 </div>
                 <div className="si-header-right">
@@ -58,6 +60,8 @@ const SurroundIndent: React.FC<Props> = (props) => {
                         tex={surround_indent.footer_tex}
                         term_ids={surround_indent.footer_socket_ids}
                         select_socket={select_socket}
+                        show_term_hints={select_mode}
+                        select_seq={select_seq}
                     />
                 </div>
                 <div className="si-footer-right">

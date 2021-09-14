@@ -10,7 +10,7 @@ interface Props {
 
 const InlineProp: React.FC<Props> = (props) => {
     const { inline_prop } = props;
-    const { select_socket } = useContext(PageContext);
+    const { select_socket, select_mode, select_seq } = useContext(PageContext);
 
     return (
         <div className="inline-container">
@@ -20,6 +20,8 @@ const InlineProp: React.FC<Props> = (props) => {
                         tex={inline_prop.prop}
                         term_ids={inline_prop.prop_socket_ids}
                         select_socket={select_socket}
+                        show_term_hints={select_mode}
+                        select_seq={select_seq}
                     />
                 </div>
                 <div className="inline-left-right">
@@ -32,6 +34,8 @@ const InlineProp: React.FC<Props> = (props) => {
                         tex={inline_prop.label}
                         term_ids={inline_prop.label_socket_ids}
                         select_socket={select_socket}
+                        show_term_hints={select_mode}
+                        select_seq={select_seq}
                     />
                 </div>
                 <div className="pg-index">({inline_prop.pg_index})</div>

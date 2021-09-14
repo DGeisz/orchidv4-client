@@ -19,6 +19,7 @@ import {
     CURSOR_NAME,
 } from "../utils/latex_utils";
 import { kernel_link } from "../../../kernel_link/kernel_link";
+import { hint_strings } from "../../../global_utils/vimium_hints";
 
 /* This is just for debugging purposes.
  * If set to false, the cursor keeps blinking
@@ -77,6 +78,9 @@ export class VirtualPage implements VSocket {
             }
         }
 
+        /* If we're in select mode, be sure
+         * to set the labels before we get reduced form */
+
         this.set_reduced_forms(this.get_reduced_form());
         this.restart_cursor();
     };
@@ -85,8 +89,6 @@ export class VirtualPage implements VSocket {
         if (!this.cursor && this.dec_sockets.length > 0) {
             this.cursor = this.dec_sockets[0].activate_left_cursor(true);
         }
-
-        console.log(res);
 
         if (is_full_page(res)) {
             const page = res.FullPage.page;
@@ -243,8 +245,6 @@ export class VirtualPage implements VSocket {
         });
 
         document.addEventListener("keydown", (e) => {
-            console.log(e.ctrlKey, e.shiftKey, e.key);
-
             if (
                 [
                     "Backspace",
@@ -288,7 +288,6 @@ export class VirtualPage implements VSocket {
                     switch (e.key) {
                         case "f":
                             e.preventDefault();
-                            console.log("Here we are!");
                             this.set_select_mode(true);
                             this.set_select_seq("");
                             break;
@@ -387,6 +386,9 @@ export class VirtualPage implements VSocket {
         const result = this.get_socket(socket_id);
 
         if (!!result) {
+            this.set_select_seq("");
+            this.set_select_mode(false);
+
             this.cursor = result.activate_left_cursor(true);
             this.process_change();
         }
@@ -396,11 +398,13 @@ export class VirtualPage implements VSocket {
     get_reduced_form: () => ReducedFormType[] = () => {
         /* If the window isn't in focus, we don't want the
          * cursor to show up */
-        const active_socket_id = this.window_in_focus
-            ? !!this.cursor
-                ? this.cursor.get_id()
-                : ""
-            : "";
+        let active_socket_id = "";
+
+        if (!this.select_mode && !!this.cursor) {
+            active_socket_id = this.cursor.get_id();
+        }
+
+        this.label_sockets();
 
         return this.dec_sockets.map((dec_socket) =>
             dec_socket.get_reduced_form(active_socket_id)
@@ -461,5 +465,29 @@ export class VirtualPage implements VSocket {
 
     delete_dec_socket_contents = (socket_id: string) => {
         kernel_link.delete_dec_socket_contents(this.id, socket_id);
+    };
+
+    num_selectable_sockets = () => {
+        let total = 0;
+
+        for (let socket of this.dec_sockets) {
+            total += socket.num_selectable_sockets();
+        }
+
+        return total;
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        for (let socket of this.dec_sockets) {
+            labels = socket.label_selectable_sockets(labels);
+        }
+
+        return labels;
+    };
+
+    label_sockets = () => {
+        const num_selectable = this.num_selectable_sockets();
+        const labels = hint_strings(num_selectable);
+        this.label_selectable_sockets(labels);
     };
 }

@@ -16,9 +16,7 @@ import {
 import { VLex } from "../v_lex";
 import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
-    active_socket_tex,
     add_color_box,
-    add_latex_color,
     create_tex_text,
     LATEX_EMPTY_SOCKET,
     LATEX_SPACE,
@@ -32,6 +30,7 @@ export class VDecSocket implements VSocket {
     private declaration?: VLex;
     private readonly id: string;
     private readonly virtual_page: VirtualPage;
+    private seq_label: string = "";
 
     /*
      * Next fields are for cursor position
@@ -188,7 +187,12 @@ export class VDecSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         } else {
             return {
@@ -201,7 +205,12 @@ export class VDecSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         }
     };
@@ -378,8 +387,6 @@ export class VDecSocket implements VSocket {
              * we want to get the next child in line
              */
             const parent_children = this.virtual_page.get_child_sockets();
-
-            console.log("Here are parent children", parent_children);
 
             /*
              * Now we figure out my index in the list so I can
@@ -613,6 +620,30 @@ export class VDecSocket implements VSocket {
             return this.get_child_sockets().some((socket) =>
                 socket.contains_id(id)
             );
+        }
+    };
+
+    num_selectable_sockets = () => {
+        if (!!this.declaration) {
+            return this.declaration.num_selectable_sockets();
+        } else {
+            return 1;
+        }
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        if (!!this.declaration) {
+            return this.declaration.label_selectable_sockets(labels);
+        } else {
+            const label = labels.pop();
+
+            if (!!label) {
+                this.seq_label = label;
+            } else {
+                throw new Error("Ran out of labels");
+            }
+
+            return labels;
         }
     };
 }

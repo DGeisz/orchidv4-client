@@ -8,7 +8,6 @@ import {
 } from "../../../page_types/reduced_form/reduced_form";
 import {
     active_socket_tex,
-    add_latex_color,
     create_tex_text,
     LATEX_EMPTY_SOCKET,
     LATEX_SPACE,
@@ -20,6 +19,7 @@ export class VExprSocket implements VSocket {
     private expression?: VLex;
     private readonly id: string;
     private readonly parent_socket: VSocket;
+    private seq_label: string = "";
 
     /*
      * Next fields are for cursor position
@@ -101,7 +101,12 @@ export class VExprSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         } else {
             return {
@@ -114,7 +119,12 @@ export class VExprSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         }
     };
@@ -465,6 +475,30 @@ export class VExprSocket implements VSocket {
             return this.get_child_sockets().some((socket) =>
                 socket.contains_id(id)
             );
+        }
+    };
+
+    num_selectable_sockets = () => {
+        if (!!this.expression) {
+            return this.expression.num_selectable_sockets();
+        } else {
+            return 1;
+        }
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        if (!!this.expression) {
+            return this.expression.label_selectable_sockets(labels);
+        } else {
+            const label = labels.pop();
+
+            if (!!label) {
+                this.seq_label = label;
+            } else {
+                throw new Error("Ran out of labels");
+            }
+
+            return labels;
         }
     };
 }

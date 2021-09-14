@@ -12,7 +12,7 @@ interface Props {
 
 const GlobalHeader: React.FC<Props> = (props) => {
     const { global_header } = props;
-    const { select_socket } = useContext(PageContext);
+    const { select_socket, select_mode, select_seq } = useContext(PageContext);
 
     const [show_proof, set_proof_visible] = useState<boolean>(true);
 
@@ -40,6 +40,8 @@ const GlobalHeader: React.FC<Props> = (props) => {
                                 tex={global_header.main_tex}
                                 term_ids={global_header.main_socket_ids}
                                 select_socket={select_socket}
+                                show_term_hints={select_mode}
+                                select_seq={select_seq}
                             />
                         </div>
                         <div className="gh-content-right">
@@ -48,6 +50,8 @@ const GlobalHeader: React.FC<Props> = (props) => {
                                     tex={global_header.label}
                                     term_ids={global_header.label_socket_ids}
                                     select_socket={select_socket}
+                                    show_term_hints={select_mode}
+                                    select_seq={select_seq}
                                 />
                             </div>
                             <div className="pg-index">

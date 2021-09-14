@@ -136,4 +136,16 @@ export class VDefinition implements VLex {
             return [def_sockets[1], def_sockets[0], this.term_expr];
         }
     };
+
+    num_selectable_sockets = () => {
+        return (
+            this.term_def.num_selectable_sockets() +
+            this.term_expr.num_selectable_sockets()
+        );
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        const remaining_labels = this.term_def.label_selectable_sockets(labels);
+        return this.term_expr.label_selectable_sockets(remaining_labels);
+    };
 }

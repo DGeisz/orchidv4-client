@@ -1,5 +1,6 @@
 @import "./node_modules/bootstrap/scss/bootstrap";
 @import "src/global_styles/basic_layout";
+@import "src/global_styles/palette";
 
 .term-hint-container {
     position: absolute;
@@ -29,6 +30,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: $black;
+}
+
+.term-left {
+    opacity: 40%;
+}
+
+.term-right {
 }
 
 .tex-container-tex {

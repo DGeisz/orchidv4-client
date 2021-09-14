@@ -16,6 +16,8 @@ export class VTermDefSocket implements VSocket {
     private readonly id: string;
     private readonly parent_socket: VSocket;
     private filled: boolean = false;
+    private seq_label: string = "";
+
     /*
      * Next fields are for cursor position
      */
@@ -44,7 +46,12 @@ export class VTermDefSocket implements VSocket {
                         this.cursor_position
                     )
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         } else {
             return {
@@ -57,7 +64,12 @@ export class VTermDefSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [this.id],
+                socket_ids: [
+                    {
+                        id: this.id,
+                        label: this.seq_label,
+                    },
+                ],
             };
         }
     };
@@ -400,5 +412,21 @@ export class VTermDefSocket implements VSocket {
                 socket.contains_id(id)
             );
         }
+    };
+
+    num_selectable_sockets = () => {
+        return 1;
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        const label = labels.pop();
+
+        if (!!label) {
+            this.seq_label = label;
+        } else {
+            throw new Error("Ran out of labels");
+        }
+
+        return labels;
     };
 }

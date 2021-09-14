@@ -11,7 +11,7 @@ interface Props {
 
 const LambdaProp: React.FC<Props> = (props) => {
     const { lambda_prop } = props;
-    const { select_socket } = useContext(PageContext);
+    const { select_socket, select_mode, select_seq } = useContext(PageContext);
 
     return (
         <div className="lambda-container">
@@ -21,6 +21,8 @@ const LambdaProp: React.FC<Props> = (props) => {
                         tex={lambda_prop.intro_tex}
                         term_ids={lambda_prop.intro_socket_ids}
                         select_socket={select_socket}
+                        show_term_hints={select_mode}
+                        select_seq={select_seq}
                     />
                 </div>
                 <div className="lam-header-right">
@@ -29,6 +31,8 @@ const LambdaProp: React.FC<Props> = (props) => {
                             tex={lambda_prop.label}
                             term_ids={lambda_prop.label_socket_ids}
                             select_socket={select_socket}
+                            select_seq={select_seq}
+                            show_term_hints={select_mode}
                         />
                     </div>
                     <div className="pg-index">({lambda_prop.pg_index})</div>

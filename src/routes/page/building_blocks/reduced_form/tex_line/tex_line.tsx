@@ -9,7 +9,7 @@ interface Props {
 }
 
 const TexLine: React.FC<Props> = (props) => {
-    const { select_socket, select_mode } = useContext(PageContext);
+    const { select_socket, select_mode, select_seq } = useContext(PageContext);
     const { tex, socket_ids } = props.tex_line;
 
     return (
@@ -19,6 +19,7 @@ const TexLine: React.FC<Props> = (props) => {
                 term_ids={socket_ids}
                 select_socket={select_socket}
                 show_term_hints={select_mode}
+                select_seq={select_seq}
             />
         </div>
     );

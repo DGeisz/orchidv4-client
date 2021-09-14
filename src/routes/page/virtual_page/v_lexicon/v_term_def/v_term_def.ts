@@ -58,4 +58,16 @@ export class VTermDef implements VLex {
     get_child_sockets = () => {
         return [this.term_def_socket, this.type_socket];
     };
+
+    num_selectable_sockets = () => {
+        return (
+            this.term_def_socket.num_selectable_sockets() +
+            this.type_socket.num_selectable_sockets()
+        );
+    };
+
+    label_selectable_sockets = (labels: string[]) => {
+        const remaining = this.term_def_socket.label_selectable_sockets(labels);
+        return this.type_socket.label_selectable_sockets(remaining);
+    };
 }
