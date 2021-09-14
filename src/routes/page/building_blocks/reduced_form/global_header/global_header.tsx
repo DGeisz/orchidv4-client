@@ -57,8 +57,8 @@ const GlobalHeader: React.FC<Props> = (props) => {
                     </div>
                     {global_header.children.length > 0 && (
                         <div
-                            className={`proof-container ${
-                                show_proof ? "proof-bar" : ""
+                            className={`gh-proof-container ${
+                                show_proof ? "gh-proof-bar" : ""
                             }`}
                         >
                             {show_proof ? (

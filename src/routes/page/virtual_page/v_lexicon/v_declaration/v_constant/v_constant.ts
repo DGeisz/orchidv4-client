@@ -60,7 +60,9 @@ export class VConstant implements VLex {
                     title: "Axiom",
                     title_color: palette.uni_form_red,
                     main_tex: term_forms[0].tex,
+                    main_socket_ids: term_forms[0].socket_ids,
                     label: term_forms[1].tex,
+                    label_socket_ids: term_forms[1].socket_ids,
                     pg_index: "1.01",
                     children: [],
                 };

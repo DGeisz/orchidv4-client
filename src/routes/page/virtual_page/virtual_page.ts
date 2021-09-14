@@ -49,12 +49,22 @@ export class VirtualPage implements VSocket {
     private cursor?: VSocket;
     private cursor_interval?: NodeJS.Timer;
 
+    private select_mode: boolean = false;
+    private set_external_select_mode: (select_mode: boolean) => void;
+
+    private select_seq: string = "";
+    private set_external_select_seq: (seq: string) => void;
+
     constructor(
         id: string,
-        set_reduced_forms: (reduced_forms: ReducedFormType[]) => void
+        set_reduced_forms: (reduced_forms: ReducedFormType[]) => void,
+        set_external_select_mode: (select_mode: boolean) => void,
+        set_external_select_seq: (seq: string) => void
     ) {
         this.id = id;
         this.set_reduced_forms = set_reduced_forms;
+        this.set_external_select_mode = set_external_select_mode;
+        this.set_external_select_seq = set_external_select_seq;
 
         this.set_listeners();
     }
@@ -203,6 +213,16 @@ export class VirtualPage implements VSocket {
         }, 530);
     };
 
+    set_select_mode = (select_mode: boolean) => {
+        this.select_mode = select_mode;
+        this.set_external_select_mode(select_mode);
+    };
+
+    set_select_seq = (select_seq: string) => {
+        this.select_seq = select_seq;
+        this.set_external_select_seq(select_seq);
+    };
+
     set_listeners = () => {
         document.addEventListener("keypress", (e) => {
             const char = e.key.trim();
@@ -212,13 +232,19 @@ export class VirtualPage implements VSocket {
                 (/^[a-z0-9]+$/i.test(char) ||
                     ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
             ) {
-                !!this.cursor && this.cursor.insert_char(char);
+                if (this.select_mode) {
+                    this.set_select_seq(this.select_seq + char);
+                } else {
+                    !!this.cursor && this.cursor.insert_char(char);
+                }
             }
 
             this.process_change();
         });
 
         document.addEventListener("keydown", (e) => {
+            console.log(e.ctrlKey, e.shiftKey, e.key);
+
             if (
                 [
                     "Backspace",
@@ -232,59 +258,107 @@ export class VirtualPage implements VSocket {
                 e.preventDefault();
             }
 
-            if (!!this.cursor) {
+            if (this.select_mode) {
+                const switch_out = () => {
+                    this.set_select_seq("");
+                    this.set_select_mode(false);
+                };
+
                 switch (e.key) {
+                    case "Escape": {
+                        switch_out();
+                        break;
+                    }
                     case "Backspace": {
-                        this.cursor.delete();
-                        break;
-                    }
-                    case "ArrowLeft": {
-                        const response = this.cursor.move_cursor_previous();
-
-                        if (response.tag === CursorResponseTag.MoveSocket) {
-                            this.cursor = response.new_socket;
+                        if (this.select_seq.length > 0) {
+                            this.set_select_seq(
+                                this.select_seq.substring(
+                                    0,
+                                    this.select_seq.length - 1
+                                )
+                            );
+                        } else {
+                            switch_out();
+                            break;
                         }
-
-                        break;
                     }
-                    case "ArrowUp": {
-                        const response = this.cursor.move_cursor_previous();
-
-                        if (response.tag === CursorResponseTag.MoveSocket) {
-                            this.cursor = response.new_socket;
+                }
+            } else {
+                if (e.ctrlKey && !e.shiftKey) {
+                    switch (e.key) {
+                        case "f":
+                            e.preventDefault();
+                            console.log("Here we are!");
+                            this.set_select_mode(true);
+                            this.set_select_seq("");
+                            break;
+                        case "j":
+                            e.preventDefault();
+                            // window.scrollBy(0, 100);
+                            window.scrollBy({
+                                top: 200,
+                                behavior: "smooth",
+                            });
+                            return;
+                        case "k":
+                            e.preventDefault();
+                            window.scrollBy(0, -200);
+                            return;
+                    }
+                } else if (!!this.cursor) {
+                    switch (e.key) {
+                        case "Backspace": {
+                            this.cursor.delete();
+                            break;
                         }
+                        case "ArrowLeft": {
+                            const response = this.cursor.move_cursor_previous();
 
-                        break;
-                    }
-                    case "ArrowRight": {
-                        const response = this.cursor.move_cursor_next();
+                            if (response.tag === CursorResponseTag.MoveSocket) {
+                                this.cursor = response.new_socket;
+                            }
 
-                        if (response.tag === CursorResponseTag.MoveSocket) {
-                            this.cursor = response.new_socket;
+                            break;
                         }
+                        case "ArrowUp": {
+                            const response = this.cursor.move_cursor_previous();
 
-                        break;
-                    }
-                    case "ArrowDown": {
-                        const response = this.cursor.move_cursor_next();
+                            if (response.tag === CursorResponseTag.MoveSocket) {
+                                this.cursor = response.new_socket;
+                            }
 
-                        if (response.tag === CursorResponseTag.MoveSocket) {
-                            this.cursor = response.new_socket;
+                            break;
                         }
+                        case "ArrowRight": {
+                            const response = this.cursor.move_cursor_next();
 
-                        break;
-                    }
-                    case "Enter": {
-                        this.cursor.commit_seq(this.id);
-                        break;
-                    }
-                    case "Tab": {
-                        this.cursor.commit_seq(this.id);
-                        break;
-                    }
-                    case " ": {
-                        this.cursor.commit_seq(this.id);
-                        break;
+                            if (response.tag === CursorResponseTag.MoveSocket) {
+                                this.cursor = response.new_socket;
+                            }
+
+                            break;
+                        }
+                        case "ArrowDown": {
+                            const response = this.cursor.move_cursor_next();
+
+                            if (response.tag === CursorResponseTag.MoveSocket) {
+                                this.cursor = response.new_socket;
+                            }
+
+                            break;
+                        }
+                        case "Enter": {
+                            this.cursor.commit_seq(this.id);
+                            break;
+                        }
+                        case "Tab": {
+                            this.cursor.commit_seq(this.id);
+                            break;
+                        }
+                        case " ": {
+                            this.cursor.commit_seq(this.id);
+                            break;
+                        }
                     }
                 }
             }

@@ -68,8 +68,13 @@ export class VDefinition implements VLex {
                         tag: ReducedFormTag.SurroundIndent,
                         body_name: "body",
                         header_tex: `${base_tex}\\{`,
+                        header_socket_ids: [
+                            ...def_forms[0].socket_ids,
+                            ...def_forms[1].socket_ids,
+                        ],
                         children: expr_form,
                         footer_tex: "\\}",
+                        footer_socket_ids: [],
                     };
                 } else {
                     if (expr_form.tag === ReducedFormTag.TexLine) {
@@ -103,7 +108,9 @@ export class VDefinition implements VLex {
                             ? palette.exi_form_blue
                             : palette.sel_fg_pink,
                     main_tex: def_forms[1].tex,
+                    main_socket_ids: def_forms[1].socket_ids,
                     label: def_forms[0].tex,
+                    label_socket_ids: def_forms[0].socket_ids,
                     pg_index: "1.infty",
                     children,
                 };

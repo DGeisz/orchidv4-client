@@ -9,6 +9,7 @@ import ReducedForm from "./building_blocks/reduced_form/reduced_form";
 import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_mode_switch";
 import { ReducedFormType } from "./page_types/reduced_form/reduced_form";
 import { PageContext } from "./page_context";
+import { CURSOR_NAME } from "./utils/latex_utils";
 
 const Page: React.FC = () => {
     const { page_id } = useParams<{ page_id: string | undefined }>();
@@ -16,12 +17,19 @@ const Page: React.FC = () => {
 
     const [select_socket, set_select_socket] =
         useState<(socket_id: string) => void>();
+    const [select_mode, set_select_mode] = useState<boolean>(false);
+    const [select_seq, set_select_seq] = useState<string>("");
 
     const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>();
 
     useEffect(() => {
         if (!!pid) {
-            const virtual_page = new VirtualPage(pid, set_reduced_forms);
+            const virtual_page = new VirtualPage(
+                pid,
+                set_reduced_forms,
+                set_select_mode,
+                set_select_seq
+            );
 
             set_select_socket(() => virtual_page.select_socket);
 
@@ -42,9 +50,24 @@ const Page: React.FC = () => {
         }
     }, [pid]);
 
+    /* Scroll the cursor into view
+     */
+    useEffect(() => {
+        const cursor = document.getElementById(CURSOR_NAME);
+
+        if (!!cursor) {
+            cursor.scrollIntoView({
+                behavior: "auto",
+                block: "nearest",
+            });
+        }
+    }, [reduced_forms]);
+
     if (!!reduced_forms && !!select_socket) {
         return (
-            <PageContext.Provider value={{ select_socket }}>
+            <PageContext.Provider
+                value={{ select_socket, select_mode, select_seq }}
+            >
                 <div className="page-container">
                     <div className="page-header">
                         <div className="page-header-right">
