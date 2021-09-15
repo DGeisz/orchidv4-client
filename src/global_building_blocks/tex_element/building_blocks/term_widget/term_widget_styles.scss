@@ -2,7 +2,7 @@
 @import "src/global_styles/basic_layout";
 @import "src/global_styles/palette";
 
-.widget-container {
+.term-hint-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -35,12 +35,4 @@
 
 .term-left {
     opacity: 40%;
-}
-
-.term-right {
-}
-
-.tex-container-tex {
-    @extend %flexRow;
-    margin: 0 !important;
 }

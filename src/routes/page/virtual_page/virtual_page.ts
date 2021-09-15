@@ -20,6 +20,11 @@ import {
 } from "../utils/latex_utils";
 import { kernel_link } from "../../../kernel_link/kernel_link";
 import { hint_strings } from "../../../global_utils/vimium_hints";
+import {
+    element_in_bottom,
+    element_in_top,
+    element_in_view,
+} from "../utils/dom_utils";
 
 /* This is just for debugging purposes.
  * If set to false, the cursor keeps blinking
@@ -43,6 +48,8 @@ export class VirtualPage implements VSocket {
     private readonly set_reduced_forms: (
         reduced_forms: ReducedFormType[]
     ) => void;
+
+    private controller_paused: boolean = false;
 
     private window_in_focus: boolean = true;
 
@@ -227,142 +234,201 @@ export class VirtualPage implements VSocket {
 
     set_listeners = () => {
         document.addEventListener("keypress", (e) => {
-            const char = e.key.trim();
+            if (!this.controller_paused) {
+                const char = e.key.trim();
 
-            if (
-                char.length === 1 &&
-                (/^[a-z0-9]+$/i.test(char) ||
-                    ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
-            ) {
-                if (this.select_mode) {
-                    this.set_select_seq(this.select_seq + char);
-                } else {
-                    !!this.cursor && this.cursor.insert_char(char);
+                if (
+                    char.length === 1 &&
+                    (/^[a-z0-9]+$/i.test(char) ||
+                        ALLOWED_NON_ALPHA_NUMERIC_CHARS.includes(char))
+                ) {
+                    if (this.select_mode) {
+                        this.set_select_seq(this.select_seq + char);
+                    } else {
+                        !!this.cursor && this.cursor.insert_char(char);
+                    }
+
+                    this.process_change();
                 }
             }
-
-            this.process_change();
         });
 
         document.addEventListener("keydown", (e) => {
-            if (
-                [
-                    "Backspace",
-                    "ArrowDown",
-                    "ArrowUp",
-                    "ArrowLeft",
-                    "ArrowRight",
-                    "Enter",
-                ].indexOf(e.key) > -1
-            ) {
+            if (this.controller_paused) {
                 e.preventDefault();
-            }
+            } else {
+                if (
+                    [
+                        "Backspace",
+                        // "ArrowDown",
+                        // "ArrowUp",
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "Enter",
+                    ].indexOf(e.key) > -1
+                ) {
+                    e.preventDefault();
+                }
 
-            if (this.select_mode) {
-                const switch_out = () => {
-                    this.set_select_seq("");
-                    this.set_select_mode(false);
-                };
+                const fraction = 1 / 3;
 
-                switch (e.key) {
-                    case "Escape": {
-                        switch_out();
-                        break;
+                let cursor_in_view = false;
+                let cursor_in_top_fraction = false;
+                let cursor_in_bottom_fraction = false;
+
+                const cursor = document.getElementById(CURSOR_NAME);
+
+                if (!!cursor && element_in_view(cursor)) {
+                    if (element_in_top(cursor, fraction)) {
+                        cursor_in_top_fraction = true;
                     }
-                    case "Backspace": {
-                        if (this.select_seq.length > 0) {
-                            this.set_select_seq(
-                                this.select_seq.substring(
-                                    0,
-                                    this.select_seq.length - 1
-                                )
-                            );
-                        } else {
+
+                    if (element_in_bottom(cursor, fraction)) {
+                        cursor_in_bottom_fraction = true;
+                    }
+
+                    cursor_in_view = true;
+                }
+
+                if (this.select_mode) {
+                    const switch_out = () => {
+                        this.set_select_seq("");
+                        this.set_select_mode(false);
+                    };
+
+                    switch (e.key) {
+                        case "Escape": {
                             switch_out();
                             break;
                         }
-                    }
-                }
-            } else {
-                if (e.ctrlKey && !e.shiftKey) {
-                    switch (e.key) {
-                        case "f":
-                            e.preventDefault();
-                            this.set_select_mode(true);
-                            this.set_select_seq("");
-                            break;
-                        case "j":
-                            e.preventDefault();
-                            // window.scrollBy(0, 100);
-                            window.scrollBy({
-                                top: 200,
-                                behavior: "smooth",
-                            });
-                            return;
-                        case "k":
-                            e.preventDefault();
-                            window.scrollBy(0, -200);
-                            return;
-                    }
-                } else if (!!this.cursor) {
-                    switch (e.key) {
                         case "Backspace": {
-                            this.cursor.delete();
-                            break;
-                        }
-                        case "ArrowLeft": {
-                            const response = this.cursor.move_cursor_previous();
-
-                            if (response.tag === CursorResponseTag.MoveSocket) {
-                                this.cursor = response.new_socket;
+                            if (this.select_seq.length > 0) {
+                                this.set_select_seq(
+                                    this.select_seq.substring(
+                                        0,
+                                        this.select_seq.length - 1
+                                    )
+                                );
+                            } else {
+                                switch_out();
+                                break;
                             }
-
-                            break;
                         }
-                        case "ArrowUp": {
-                            const response = this.cursor.move_cursor_previous();
+                    }
+                } else {
+                    if (e.ctrlKey && !e.shiftKey) {
+                        switch (e.key) {
+                            case "Control":
+                                e.preventDefault();
+                                return;
+                            case "f":
+                                e.preventDefault();
+                                this.set_select_mode(true);
+                                this.set_select_seq("");
+                                break;
+                            case "j":
+                                e.preventDefault();
+                                this.controller_paused = true;
 
-                            if (response.tag === CursorResponseTag.MoveSocket) {
-                                this.cursor = response.new_socket;
+                                setTimeout(() => {
+                                    this.controller_paused = false;
+                                }, 200);
+
+                                window.scrollBy(0, 400);
+                                return;
+                            case "k":
+                                e.preventDefault();
+                                this.controller_paused = true;
+
+                                setTimeout(() => {
+                                    this.controller_paused = false;
+                                }, 200);
+
+                                window.scrollBy(0, -400);
+                                return;
+                        }
+                    } else if (!!this.cursor) {
+                        switch (e.key) {
+                            case "Backspace": {
+                                this.cursor.delete();
+                                break;
                             }
+                            case "ArrowLeft": {
+                                const response =
+                                    this.cursor.move_cursor_previous();
 
-                            break;
-                        }
-                        case "ArrowRight": {
-                            const response = this.cursor.move_cursor_next();
+                                if (
+                                    response.tag ===
+                                    CursorResponseTag.MoveSocket
+                                ) {
+                                    this.cursor = response.new_socket;
+                                }
 
-                            if (response.tag === CursorResponseTag.MoveSocket) {
-                                this.cursor = response.new_socket;
+                                break;
                             }
+                            case "ArrowUp": {
+                                if (!cursor_in_top_fraction) {
+                                    e.preventDefault();
+                                }
 
-                            break;
-                        }
-                        case "ArrowDown": {
-                            const response = this.cursor.move_cursor_next();
+                                const response =
+                                    this.cursor.move_cursor_previous();
 
-                            if (response.tag === CursorResponseTag.MoveSocket) {
-                                this.cursor = response.new_socket;
+                                if (
+                                    response.tag ===
+                                    CursorResponseTag.MoveSocket
+                                ) {
+                                    this.cursor = response.new_socket;
+                                }
+
+                                break;
                             }
+                            case "ArrowRight": {
+                                const response = this.cursor.move_cursor_next();
 
-                            break;
-                        }
-                        case "Enter": {
-                            this.cursor.commit_seq(this.id);
-                            break;
-                        }
-                        case "Tab": {
-                            this.cursor.commit_seq(this.id);
-                            break;
-                        }
-                        case " ": {
-                            this.cursor.commit_seq(this.id);
-                            break;
+                                if (
+                                    response.tag ===
+                                    CursorResponseTag.MoveSocket
+                                ) {
+                                    this.cursor = response.new_socket;
+                                }
+
+                                break;
+                            }
+                            case "ArrowDown": {
+                                if (!cursor_in_bottom_fraction) {
+                                    e.preventDefault();
+                                }
+
+                                const response = this.cursor.move_cursor_next();
+
+                                if (
+                                    response.tag ===
+                                    CursorResponseTag.MoveSocket
+                                ) {
+                                    this.cursor = response.new_socket;
+                                }
+
+                                break;
+                            }
+                            case "Enter": {
+                                this.cursor.commit_seq(this.id);
+                                break;
+                            }
+                            case "Tab": {
+                                this.cursor.commit_seq(this.id);
+                                break;
+                            }
+                            case " ": {
+                                this.cursor.commit_seq(this.id);
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            this.process_change();
+                this.process_change();
+            }
         });
 
         window.addEventListener("focus", () => {
@@ -380,6 +446,14 @@ export class VirtualPage implements VSocket {
 
             this.process_change();
         });
+
+        // window.addEventListener("scroll", () => {
+        //     this.controller_paused = true;
+        //
+        //     setTimeout(() => {
+        //         this.controller_paused = false;
+        //     }, 1000);
+        // });
     };
 
     select_socket = (socket_id: string) => {

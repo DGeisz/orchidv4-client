@@ -1,9 +1,25 @@
 import React, { useEffect, useState } from "react";
+import { render } from "react-dom";
 import "./tex_element_styles.scss";
 import { renderToString } from "katex";
 import { SocketId } from "../../routes/page/page_types/reduced_form/reduced_form";
+import TermWidget from "./building_blocks/term_widget/term_widget";
 
 const HOVER_COLOR = "#8fcad9";
+
+const BigRed: React.FC = () => {
+    return (
+        <div
+            style={{
+                position: "absolute",
+                opacity: 0.5,
+                width: 100,
+                height: 100,
+                backgroundColor: "red",
+            }}
+        />
+    );
+};
 
 interface MiniProps {
     tex: string;
@@ -34,7 +50,10 @@ interface Props {
 }
 
 const TexElement: React.FC<Props> = (props) => {
-    const [termHints, setTermHints] = useState<HTMLDivElement[]>([]);
+    // const [termHints, setTermHints] = useState<HTMLDivElement[]>([]);
+    const [widget_containers, set_widget_containers] = useState<
+        HTMLDivElement[]
+    >([]);
 
     useEffect(() => {
         console.log("Here's seq", props.select_seq);
@@ -70,21 +89,38 @@ const TexElement: React.FC<Props> = (props) => {
     });
 
     useEffect(() => {
-        termHints.forEach((hint) => hint.remove());
+        // props.term_ids.forEach((socket_id) => {
+        //     const element = document.getElementById(socket_id.id);
+        //
+        //     if (!!element) {
+        //         render(<BigRed />, element);
+        //     }
+        // });
+
+        widget_containers.forEach((container) => container.remove());
+
+        // termHints.forEach((hint) => hint.remove());
 
         if (!!props.show_term_hints) {
-            const newTermHints: HTMLDivElement[] = [];
+            const new_containers: HTMLDivElement[] = [];
 
             props.term_ids.forEach((socket_id) => {
                 let tex_node = document.getElementById(socket_id.id);
 
                 if (!!tex_node) {
-                    const domHint = genTermHint(
-                        socket_id.label,
-                        props.select_seq
+                    const widget_container = create_widget_container();
+                    tex_node.appendChild(widget_container);
+
+                    render(
+                        <TermWidget
+                            show_hint
+                            hint_seq={socket_id.label}
+                            select_seq={props.select_seq}
+                        />,
+                        widget_container
                     );
-                    tex_node.appendChild(domHint);
-                    newTermHints.push(domHint);
+
+                    new_containers.push(widget_container);
                 }
 
                 if (props.select_seq === socket_id.label) {
@@ -92,7 +128,7 @@ const TexElement: React.FC<Props> = (props) => {
                 }
             });
 
-            setTermHints(newTermHints);
+            set_widget_containers(new_containers);
         }
     }, [props.show_term_hints, props.tex, props.term_ids, props.select_seq]);
 
@@ -106,6 +142,13 @@ export default React.memo(TexElement, (jax1, jax2) => {
         jax1.select_seq === jax2.select_seq
     );
 });
+
+export function create_widget_container() {
+    const widget_container = document.createElement("div");
+    widget_container.className = "widget-container";
+
+    return widget_container;
+}
 
 export function genTermHint(hint: string, select_seq: string): HTMLDivElement {
     const hintContainer = document.createElement("div");

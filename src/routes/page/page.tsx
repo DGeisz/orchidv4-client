@@ -55,7 +55,7 @@ const Page: React.FC = () => {
     useEffect(() => {
         const cursor = document.getElementById(CURSOR_NAME);
 
-        if (!!cursor) {
+        if (!!cursor && !select_mode) {
             cursor.scrollIntoView({
                 behavior: "auto",
                 block: "nearest",
@@ -68,6 +68,7 @@ const Page: React.FC = () => {
             <PageContext.Provider
                 value={{ select_socket, select_mode, select_seq }}
             >
+                <div id="yota" />
                 <div className="page-container">
                     <div className="page-header">
                         <div className="page-header-right">
