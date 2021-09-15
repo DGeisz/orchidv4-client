@@ -72,7 +72,7 @@ export class VConstant implements VLex {
                     tex: `${add_latex_color(
                         create_tex_text("constant"),
                         palette.condi_form_salmon
-                    )} ${LATEX_SPACE} ${term_forms[0].tex} : ${
+                    )} ${LATEX_SPACE}${LATEX_SPACE} ${term_forms[0].tex} : ${
                         term_forms[1].tex
                     }`,
                     socket_ids: [
