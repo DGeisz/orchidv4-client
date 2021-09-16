@@ -9,18 +9,24 @@ import {
 } from "../../../page_types/reduced_form/reduced_form";
 import { add_latex_color } from "../../../utils/latex_utils";
 import { palette } from "../../../../../global_styles/palette";
+import { VirtualPage } from "../../virtual_page";
 
 export class VTermDef implements VLex {
     private readonly term_def_socket: VTermDefSocket;
     private readonly type_socket: VExprSocket;
 
-    constructor(term_def_ser: TermDefSer, parent_socket: VSocket) {
+    constructor(
+        term_def_ser: TermDefSer,
+        parent_socket: VSocket,
+        virtual_page: VirtualPage
+    ) {
         const { term_def_socket_ser, type_socket_ser } = term_def_ser;
 
         this.type_socket = new VExprSocket(type_socket_ser, parent_socket);
         this.term_def_socket = new VTermDefSocket(
             term_def_socket_ser,
-            parent_socket
+            parent_socket,
+            virtual_page
         );
     }
 

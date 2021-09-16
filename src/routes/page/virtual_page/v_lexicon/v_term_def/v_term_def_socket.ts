@@ -11,12 +11,16 @@ import {
     text_with_cursor,
     wrap_html_id,
 } from "../../../utils/latex_utils";
+import { is_some } from "../../../page_types/page_serde/utils/rust_option";
+import { VirtualPage } from "../../virtual_page";
 
 export class VTermDefSocket implements VSocket {
     private readonly id: string;
     private readonly parent_socket: VSocket;
-    private filled: boolean = false;
+    private readonly virtual_page: VirtualPage;
     private seq_label: string = "";
+    private term_seq?: string;
+    private representation?: string;
 
     /*
      * Next fields are for cursor position
@@ -26,10 +30,20 @@ export class VTermDefSocket implements VSocket {
     private right_entry_value: string = "";
     private cursor_position: number = 0;
 
-    constructor(term_def_socket_ser: TermDefSocketSer, parent_socket: VSocket) {
-        const { id } = term_def_socket_ser;
+    constructor(
+        term_def_socket_ser: TermDefSocketSer,
+        parent_socket: VSocket,
+        virtual_page: VirtualPage
+    ) {
+        const { id, term_seq, representation } = term_def_socket_ser;
         this.id = id;
         this.parent_socket = parent_socket;
+        this.virtual_page = virtual_page;
+
+        if (is_some(term_seq) && is_some(representation)) {
+            this.term_seq = term_seq;
+            this.representation = representation;
+        }
     }
 
     get_id = () => this.id;
@@ -101,7 +115,7 @@ export class VTermDefSocket implements VSocket {
          * If the socket is empty, then we always
          * favor the left side
          */
-        if (!this.filled) {
+        if (!this.term_seq && !this.representation) {
             return this.activate_left_cursor(from_left);
         }
 
@@ -126,7 +140,11 @@ export class VTermDefSocket implements VSocket {
      * in the right entry, and we move to the
      * end of the left entry */
     private check_right_left = () => {
-        if (!this.filled && this.cursor_side === CursorSide.Right) {
+        if (
+            !this.term_seq &&
+            !this.representation &&
+            this.cursor_side === CursorSide.Right
+        ) {
             this.right_entry_value = "";
             this.cursor_side = CursorSide.Left;
             this.cursor_position = this.left_entry_value.length;
@@ -264,7 +282,7 @@ export class VTermDefSocket implements VSocket {
                     /*
                      * First handle the case where the socket is empty
                      */
-                    if (!this.filled) {
+                    if (!this.term_seq && !this.representation) {
                         return move_cursor_next_socket();
                     } else {
                         /*

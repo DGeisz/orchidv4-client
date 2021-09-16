@@ -56,3 +56,22 @@ type DecSocketCmdEnum =
     | DeleteCmd
     | DeleteContentsCmd
     | InsertCmd;
+
+/*
+ * Term def socket commands
+ */
+export interface TermDefSocketCmd {
+    TermDefSocket: {
+        page_id: string;
+        cmd: TermDefCmds;
+    };
+}
+
+export interface TDFillCmd {
+    Fill: {
+        tds_id: string;
+        term_seq: string;
+    };
+}
+
+type TermDefCmds = TDFillCmd;

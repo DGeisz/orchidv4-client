@@ -1,5 +1,10 @@
 import { WsResponse } from "./ws_response";
-import { DecSocketCmd, FullPageCmd, NewPageCmd } from "./ws_commands";
+import {
+    DecSocketCmd,
+    FullPageCmd,
+    NewPageCmd,
+    TermDefSocketCmd,
+} from "./ws_commands";
 import { v4 } from "uuid";
 
 class KernelLink {
@@ -190,6 +195,26 @@ class KernelLink {
                     Insert: {
                         rel_socket_id,
                         before_rel,
+                    },
+                },
+            },
+        };
+
+        this.send_message(cmd);
+    };
+
+    fill_term_def_socket = (
+        page_id: string,
+        tds_id: string,
+        term_seq: string
+    ) => {
+        const cmd: TermDefSocketCmd = {
+            TermDefSocket: {
+                page_id,
+                cmd: {
+                    Fill: {
+                        tds_id,
+                        term_seq,
                     },
                 },
             },

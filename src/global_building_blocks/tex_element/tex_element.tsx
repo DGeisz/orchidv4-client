@@ -4,6 +4,7 @@ import "./tex_element_styles.scss";
 import { renderToString } from "katex";
 import { SocketId } from "../../routes/page/page_types/reduced_form/reduced_form";
 import TermWidget from "./building_blocks/term_widget/term_widget";
+import { element_in_view } from "../../routes/page/utils/dom_utils";
 
 const HOVER_COLOR = "#8fcad9";
 
@@ -107,7 +108,7 @@ const TexElement: React.FC<Props> = (props) => {
             props.term_ids.forEach((socket_id) => {
                 let tex_node = document.getElementById(socket_id.id);
 
-                if (!!tex_node) {
+                if (!!tex_node && element_in_view(tex_node)) {
                     const widget_container = create_widget_container();
                     tex_node.appendChild(widget_container);
 

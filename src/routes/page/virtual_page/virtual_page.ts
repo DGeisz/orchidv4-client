@@ -561,7 +561,11 @@ export class VirtualPage implements VSocket {
 
     label_sockets = () => {
         const num_selectable = this.num_selectable_sockets();
-        const labels = hint_strings(num_selectable);
+        const labels = hint_strings(num_selectable).reverse();
         this.label_selectable_sockets(labels);
+    };
+
+    fill_term_def_socket = (tds_id: string, term_seq: string) => {
+        kernel_link.fill_term_def_socket(this.id, tds_id, term_seq);
     };
 }

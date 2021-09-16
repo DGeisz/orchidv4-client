@@ -1,7 +1,12 @@
 import { PageSerialization } from "../routes/page/page_types/page_serde/page_serialization";
 import { DecSocketSer } from "../routes/page/page_types/page_serde/lexicon/declaration/dec_serialization";
+import { TermDefSocketSer } from "../routes/page/page_types/page_serde/lexicon/term_def/term_def_serialization";
 
-export type WsResponse = NewPageResponse | FullPageResponse | DecSocketRes;
+export type WsResponse =
+    | NewPageResponse
+    | FullPageResponse
+    | DecSocketRes
+    | TermDefSocketRes;
 
 /*
  * Type and guard for a simple new page
@@ -46,6 +51,20 @@ export function is_dec_socket_res(res: WsResponse): res is DecSocketRes {
     return res.hasOwnProperty("DecSocket");
 }
 
+/*
+ * Type and guard for term def socket res
+ */
+export interface TermDefSocketRes {
+    TermDefSocket: {
+        page_id: string;
+        res: null;
+    };
+}
+
+export function is_td_socket_res(res: WsResponse): res is TermDefSocketRes {
+    return res.hasOwnProperty("TermDefSocket");
+}
+
 type DecSocketResEnum = DecUpdate | DecAppend | DecInsert | DecDelete;
 
 export interface DecUpdate {
@@ -88,4 +107,19 @@ export interface DecDelete {
 
 export function is_dec_delete(res: DecSocketResEnum): res is DecDelete {
     return res.hasOwnProperty("Delete");
+}
+
+/*
+ * Types for term def sockets
+ */
+type TdResEnum = TdUpdate;
+
+export interface TdUpdate {
+    Update: {
+        term_def_socket_ser: TermDefSocketSer;
+    };
+}
+
+export function is_td_update(res: TdResEnum): res is TdUpdate {
+    return res.hasOwnProperty("Update");
 }

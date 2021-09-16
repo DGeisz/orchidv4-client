@@ -35,7 +35,7 @@ export class VDefinition implements VLex {
 
         this.virtual_page = virtual_page;
         this.variation = variation;
-        this.term_def = new VTermDef(term_def_ser, parent_socket);
+        this.term_def = new VTermDef(term_def_ser, parent_socket, virtual_page);
         this.term_expr = new VExprSocket(term_expr_ser, parent_socket);
     }
 
