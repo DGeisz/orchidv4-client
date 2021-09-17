@@ -16,6 +16,7 @@ import {
 import { VLex } from "../v_lex";
 import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
+    active_socket_tex,
     add_color_box,
     create_tex_text,
     LATEX_EMPTY_SOCKET,
@@ -24,12 +25,11 @@ import {
     wrap_html_id,
 } from "../../../utils/latex_utils";
 import { palette } from "../../../../../global_styles/palette";
-import { VirtualPage } from "../../virtual_page";
 
 export class VDecSocket implements VSocket {
     private declaration?: VLex;
     private readonly id: string;
-    private readonly virtual_page: VirtualPage;
+    private readonly parent_socket: VSocket;
     private seq_label: string = "";
 
     /*
@@ -43,24 +43,16 @@ export class VDecSocket implements VSocket {
     /* For priming delete */
     private delete_prime_count: number = 0;
 
-    constructor(dec_socket_ser: DecSocketSer, virtual_page: VirtualPage) {
+    constructor(dec_socket_ser: DecSocketSer, parent_socket: VSocket) {
         const { id, dec_ser } = dec_socket_ser;
         this.id = id;
-        this.virtual_page = virtual_page;
+        this.parent_socket = parent_socket;
 
         if (is_some(dec_ser)) {
             if (is_const(dec_ser)) {
-                this.declaration = new VConstant(
-                    dec_ser.Const,
-                    this,
-                    this.virtual_page
-                );
+                this.declaration = new VConstant(dec_ser.Const, this);
             } else {
-                this.declaration = new VDefinition(
-                    dec_ser.Def,
-                    this,
-                    this.virtual_page
-                );
+                this.declaration = new VDefinition(dec_ser.Def, this);
             }
         }
     }
@@ -71,17 +63,9 @@ export class VDecSocket implements VSocket {
                 const { dec_ser } = dec_socket_ser;
 
                 if (is_const(dec_ser)) {
-                    this.declaration = new VConstant(
-                        dec_ser.Const,
-                        this,
-                        this.virtual_page
-                    );
+                    this.declaration = new VConstant(dec_ser.Const, this);
                 } else if (is_def(dec_ser)) {
-                    this.declaration = new VDefinition(
-                        dec_ser.Def,
-                        this,
-                        this.virtual_page
-                    );
+                    this.declaration = new VDefinition(dec_ser.Def, this);
                 }
             } else {
                 this.declaration = undefined;
@@ -181,9 +165,11 @@ export class VDecSocket implements VSocket {
             return {
                 tag: ReducedFormTag.TexLine,
                 tex: wrap_html_id(
-                    text_with_cursor(
-                        this.left_entry_value,
-                        this.cursor_position
+                    active_socket_tex(
+                        text_with_cursor(
+                            this.left_entry_value,
+                            this.cursor_position
+                        )
                     ),
                     this.id
                 ),
@@ -332,7 +318,7 @@ export class VDecSocket implements VSocket {
         }
     };
 
-    delete = () => {
+    delete = (page_id: string) => {
         this.check_right_left();
 
         switch (this.cursor_side) {
@@ -347,7 +333,7 @@ export class VDecSocket implements VSocket {
                     this.cursor_position--;
                 } else {
                     if (!this.declaration) {
-                        this.virtual_page.delete_dec_socket(this.id);
+                        kernel_link.delete_dec_socket(page_id, this.id);
                     }
                 }
                 break;
@@ -365,7 +351,10 @@ export class VDecSocket implements VSocket {
                     if (this.delete_prime_count === 0) {
                         this.delete_prime_count = 2;
                     } else {
-                        this.virtual_page.delete_dec_socket_contents(this.id);
+                        kernel_link.delete_dec_socket_contents(
+                            page_id,
+                            this.id
+                        );
                     }
                 }
                 break;
@@ -386,7 +375,7 @@ export class VDecSocket implements VSocket {
              * First we get the parent children, because
              * we want to get the next child in line
              */
-            const parent_children = this.virtual_page.get_child_sockets();
+            const parent_children = this.parent_socket.get_child_sockets();
 
             /*
              * Now we figure out my index in the list so I can
@@ -404,7 +393,9 @@ export class VDecSocket implements VSocket {
              */
             if (self_index < 0 || self_index === parent_children.length - 1) {
                 /* We're coming from the left (cause we're inside) */
-                return cursor_moved(this.virtual_page.activate_right_cursor());
+                return cursor_moved(
+                    this.parent_socket.activate_right_cursor(true)
+                );
             } else {
                 /* Otherwise, we push to the next child */
                 const next_socket = parent_children[self_index + 1];
@@ -491,7 +482,7 @@ export class VDecSocket implements VSocket {
                      * our parent's children
                      */
                     const parent_children =
-                        this.virtual_page.get_child_sockets();
+                        this.parent_socket.get_child_sockets();
 
                     /* Figure out our place in the children */
                     const self_index = parent_children
@@ -507,7 +498,7 @@ export class VDecSocket implements VSocket {
                      */
                     if (self_index < 1) {
                         return cursor_moved(
-                            this.virtual_page.activate_left_cursor()
+                            this.parent_socket.activate_left_cursor(false)
                         );
                     } else {
                         /*
@@ -569,16 +560,16 @@ export class VDecSocket implements VSocket {
                     this.left_entry_value
                 );
             } else {
-                this.virtual_page.insert_dec_socket(this.id, true);
+                kernel_link.insert_dec_socket(page_id, this.id, true);
             }
         } else {
             switch (this.cursor_side) {
                 case CursorSide.Left: {
-                    this.virtual_page.insert_dec_socket(this.id, true);
+                    kernel_link.insert_dec_socket(page_id, this.id, true);
                     break;
                 }
                 case CursorSide.Right: {
-                    this.virtual_page.insert_dec_socket(this.id, false);
+                    kernel_link.insert_dec_socket(page_id, this.id, false);
                     break;
                 }
             }
@@ -644,6 +635,22 @@ export class VDecSocket implements VSocket {
             }
 
             return labels;
+        }
+    };
+
+    get_term_def_socket = (socket_id: string) => {
+        if (!!this.declaration) {
+            return this.declaration.get_term_def_socket(socket_id);
+        } else {
+            return null;
+        }
+    };
+
+    get_expr_socket = (socket_id: string) => {
+        if (!!this.declaration) {
+            return this.declaration.get_expr_socket(socket_id);
+        } else {
+            return null;
         }
     };
 }

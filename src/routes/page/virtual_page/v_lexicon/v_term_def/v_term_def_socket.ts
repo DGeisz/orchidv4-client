@@ -6,21 +6,27 @@ import {
 } from "../../../page_types/reduced_form/reduced_form";
 import {
     active_socket_tex,
+    add_color_box,
+    add_latex_color,
     create_tex_text,
     LATEX_EMPTY_SOCKET,
+    LATEX_SPACE,
     text_with_cursor,
     wrap_html_id,
 } from "../../../utils/latex_utils";
 import { is_some } from "../../../page_types/page_serde/utils/rust_option";
-import { VirtualPage } from "../../virtual_page";
+import { palette } from "../../../../../global_styles/palette";
+import { kernel_link } from "../../../../../kernel_link/kernel_link";
 
 export class VTermDefSocket implements VSocket {
     private readonly id: string;
     private readonly parent_socket: VSocket;
-    private readonly virtual_page: VirtualPage;
     private seq_label: string = "";
     private term_seq?: string;
     private representation?: string;
+    private is_entry_invalid: boolean = false;
+
+    private rand: number;
 
     /*
      * Next fields are for cursor position
@@ -30,15 +36,15 @@ export class VTermDefSocket implements VSocket {
     private right_entry_value: string = "";
     private cursor_position: number = 0;
 
-    constructor(
-        term_def_socket_ser: TermDefSocketSer,
-        parent_socket: VSocket,
-        virtual_page: VirtualPage
-    ) {
+    /* For priming delete */
+    private delete_prime_count: number = 0;
+
+    constructor(term_def_socket_ser: TermDefSocketSer, parent_socket: VSocket) {
+        this.rand = Math.random();
+
         const { id, term_seq, representation } = term_def_socket_ser;
         this.id = id;
         this.parent_socket = parent_socket;
-        this.virtual_page = virtual_page;
 
         if (is_some(term_seq) && is_some(representation)) {
             this.term_seq = term_seq;
@@ -46,20 +52,126 @@ export class VTermDefSocket implements VSocket {
         }
     }
 
+    update = (term_def_socket_ser: TermDefSocketSer) => {
+        const { id, term_seq, representation } = term_def_socket_ser;
+
+        if (this.id === id) {
+            if (is_some(term_seq) && is_some(representation)) {
+                this.term_seq = term_seq;
+                this.representation = representation;
+            } else {
+                this.term_seq = undefined;
+                this.representation = undefined;
+            }
+        }
+
+        this.left_entry_value = "";
+        this.right_entry_value = "";
+        this.cursor_position = 0;
+    };
+
     get_id = () => this.id;
 
     get_reduced_form: (cursor_socket_id: string) => ReducedFormType = (
         cursor_socket_id: string
     ) => {
-        if (cursor_socket_id === this.id) {
-            return {
-                tag: ReducedFormTag.TexLine,
-                tex: active_socket_tex(
+        if (this.delete_prime_count > 0) {
+            this.delete_prime_count--;
+        }
+
+        let is_invalid = false;
+
+        if (this.is_entry_invalid) {
+            /* First clear this out so this doesn't show up on the next render */
+            this.is_entry_invalid = false;
+            /* Then set the local is_invalid to make note that we should flag
+             * invalid this time around */
+            is_invalid = true;
+        }
+
+        if (!!this.term_seq && !!this.representation) {
+            if (cursor_socket_id === this.id) {
+                const bg_color =
+                    this.delete_prime_count > 0
+                        ? palette.danger_hover
+                        : palette.socket_active_blue;
+
+                switch (this.cursor_side) {
+                    case CursorSide.Left:
+                        return {
+                            tag: ReducedFormTag.TexLine,
+                            tex: add_color_box(
+                                text_with_cursor(
+                                    this.left_entry_value,
+                                    this.cursor_position
+                                ) +
+                                    LATEX_SPACE +
+                                    this.representation,
+                                bg_color
+                            ),
+                            socket_ids: [
+                                {
+                                    id: this.id,
+                                    label: this.seq_label,
+                                },
+                            ],
+                        };
+                    case CursorSide.Right:
+                        return {
+                            tag: ReducedFormTag.TexLine,
+                            tex: add_color_box(
+                                this.representation +
+                                    LATEX_SPACE +
+                                    text_with_cursor(
+                                        this.right_entry_value,
+                                        this.cursor_position
+                                    ),
+                                bg_color
+                            ),
+                            socket_ids: [
+                                {
+                                    id: this.id,
+                                    label: this.seq_label,
+                                },
+                            ],
+                        };
+                }
+            } else {
+                return {
+                    tag: ReducedFormTag.TexLine,
+                    tex: wrap_html_id(this.representation, this.id),
+                    socket_ids: [
+                        {
+                            id: this.id,
+                            label: this.seq_label,
+                        },
+                    ],
+                };
+            }
+        } else if (cursor_socket_id === this.id) {
+            console.log(
+                "These are the droid!",
+                this.id,
+                this.left_entry_value,
+                this.rand
+            );
+            let tex = wrap_html_id(
+                active_socket_tex(
                     text_with_cursor(
                         this.left_entry_value,
                         this.cursor_position
                     )
                 ),
+                this.id
+            );
+
+            if (is_invalid) {
+                tex = add_latex_color(tex, palette.warning);
+            }
+
+            return {
+                tag: ReducedFormTag.TexLine,
+                tex,
                 socket_ids: [
                     {
                         id: this.id,
@@ -68,16 +180,22 @@ export class VTermDefSocket implements VSocket {
                 ],
             };
         } else {
+            let tex = wrap_html_id(
+                create_tex_text(
+                    !!this.left_entry_value
+                        ? this.left_entry_value
+                        : LATEX_EMPTY_SOCKET
+                ),
+                this.id
+            );
+
+            if (is_invalid) {
+                tex = add_latex_color(tex, palette.warning);
+            }
+
             return {
                 tag: ReducedFormTag.TexLine,
-                tex: wrap_html_id(
-                    create_tex_text(
-                        !!this.left_entry_value
-                            ? this.left_entry_value
-                            : LATEX_EMPTY_SOCKET
-                    ),
-                    this.id
-                ),
+                tex,
                 socket_ids: [
                     {
                         id: this.id,
@@ -173,14 +291,25 @@ export class VTermDefSocket implements VSocket {
     };
 
     insert_char = (char: string) => {
+        console.log(
+            "This is it: ",
+            char,
+            this.cursor_position,
+            this.cursor_side,
+            this.left_entry_value,
+            this.id,
+            this.rand
+        );
         this.check_right_left();
 
         switch (this.cursor_side) {
             case CursorSide.Left: {
+                console.log("On the left: ", this.left_entry_value);
                 this.left_entry_value =
                     this.left_entry_value.slice(0, this.cursor_position) +
                     char +
                     this.left_entry_value.slice(this.cursor_position);
+                console.log("On the left II: ", this.left_entry_value);
 
                 this.cursor_position++;
 
@@ -224,6 +353,10 @@ export class VTermDefSocket implements VSocket {
                         ) + this.right_entry_value.slice(this.cursor_position);
 
                     this.cursor_position--;
+                } else {
+                    if (this.delete_prime_count === 0) {
+                        this.delete_prime_count = 2;
+                    }
                 }
                 break;
             }
@@ -419,7 +552,15 @@ export class VTermDefSocket implements VSocket {
         }
     };
 
-    commit_seq = () => {};
+    commit_seq = (page_id: string) => {
+        if (!this.term_seq && !this.representation) {
+            kernel_link.fill_term_def_socket(
+                page_id,
+                this.id,
+                this.left_entry_value
+            );
+        }
+    };
     check_cursor = () => null;
 
     contains_id = (id: string) => {
@@ -446,5 +587,21 @@ export class VTermDefSocket implements VSocket {
         }
 
         return labels;
+    };
+
+    get_term_def_socket = (socket_id: string) => {
+        if (this.id === socket_id) {
+            return this;
+        } else {
+            return null;
+        }
+    };
+
+    get_expr_socket = () => {
+        return null;
+    };
+
+    flag_invalid = () => {
+        this.is_entry_invalid = true;
     };
 }

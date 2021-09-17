@@ -17,25 +17,17 @@ import { palette } from "../../../../../../global_styles/palette";
 import { VTermDef } from "../../v_term_def/v_term_def";
 import { VExprSocket } from "../../v_expression/v_expr_socket";
 import { VSocket } from "../../v_socket";
-import { VirtualPage } from "../../../virtual_page";
 
 export class VDefinition implements VLex {
     private readonly variation: DefVariation;
     private term_def: VTermDef;
     private readonly term_expr: VExprSocket;
-    private virtual_page: VirtualPage;
 
-    constructor(
-        def_ser: DefSer,
-        parent_socket: VSocket,
-
-        virtual_page: VirtualPage
-    ) {
+    constructor(def_ser: DefSer, parent_socket: VSocket) {
         const { term_def_ser, term_expr_ser, variation } = def_ser;
 
-        this.virtual_page = virtual_page;
         this.variation = variation;
-        this.term_def = new VTermDef(term_def_ser, parent_socket, virtual_page);
+        this.term_def = new VTermDef(term_def_ser, parent_socket);
         this.term_expr = new VExprSocket(term_expr_ser, parent_socket);
     }
 
@@ -147,5 +139,25 @@ export class VDefinition implements VLex {
     label_selectable_sockets = (labels: string[]) => {
         const remaining_labels = this.term_def.label_selectable_sockets(labels);
         return this.term_expr.label_selectable_sockets(remaining_labels);
+    };
+
+    get_term_def_socket = (socket_id: string) => {
+        const td = this.term_def.get_term_def_socket(socket_id);
+
+        if (!!td) {
+            return td;
+        } else {
+            return this.term_expr.get_term_def_socket(socket_id);
+        }
+    };
+
+    get_expr_socket = (socket_id: string) => {
+        const ex = this.term_def.get_expr_socket(socket_id);
+
+        if (!!ex) {
+            return ex;
+        } else {
+            return this.term_expr.get_expr_socket(socket_id);
+        }
     };
 }

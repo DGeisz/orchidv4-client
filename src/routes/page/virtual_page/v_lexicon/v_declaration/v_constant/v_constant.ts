@@ -16,25 +16,18 @@ import {
 import { palette } from "../../../../../../global_styles/palette";
 import { VTermDef } from "../../v_term_def/v_term_def";
 import { VSocket } from "../../v_socket";
-import { VirtualPage } from "../../../virtual_page";
 
 export class VConstant implements VLex {
     private readonly variation: ConstVariation;
     private term_def: VTermDef;
-    private virtual_page: VirtualPage;
     private parent_socket: VSocket;
 
-    constructor(
-        const_ser: ConstSer,
-        parent_socket: VSocket,
-        virtual_page: VirtualPage
-    ) {
+    constructor(const_ser: ConstSer, parent_socket: VSocket) {
         const { variation, term_def_ser } = const_ser;
 
         this.parent_socket = parent_socket;
-        this.virtual_page = virtual_page;
         this.variation = variation;
-        this.term_def = new VTermDef(term_def_ser, parent_socket, virtual_page);
+        this.term_def = new VTermDef(term_def_ser, parent_socket);
     }
 
     get_reduced_form: (c: string) => ReducedFormType = (
@@ -53,10 +46,6 @@ export class VConstant implements VLex {
             case ConstVariation.Axiom:
                 return {
                     tag: ReducedFormTag.GlobalHeader,
-                    on_delete: () =>
-                        this.virtual_page.delete_dec_socket(
-                            this.parent_socket.get_id()
-                        ),
                     title: "Axiom",
                     title_color: palette.uni_form_red,
                     main_tex: term_forms[0].tex,
@@ -97,5 +86,13 @@ export class VConstant implements VLex {
 
     label_selectable_sockets = (labels: string[]) => {
         return this.term_def.label_selectable_sockets(labels);
+    };
+
+    get_term_def_socket = (socket_id: string) => {
+        return this.term_def.get_term_def_socket(socket_id);
+    };
+
+    get_expr_socket = (socket_id: string) => {
+        return this.term_def.get_expr_socket(socket_id);
     };
 }

@@ -3,10 +3,34 @@ import { DecSocketSer } from "../routes/page/page_types/page_serde/lexicon/decla
 import { TermDefSocketSer } from "../routes/page/page_types/page_serde/lexicon/term_def/term_def_serialization";
 
 export type WsResponse =
+    | ErrorResponse
     | NewPageResponse
     | FullPageResponse
     | DecSocketRes
     | TermDefSocketRes;
+
+export interface ErrorResponse {
+    Error: ErrorResEnum;
+}
+
+export function is_error_res(res: WsResponse): res is ErrorResponse {
+    return res.hasOwnProperty("Error");
+}
+
+export type ErrorResEnum = InvalidTdsInputRes;
+
+export interface InvalidTdsInputRes {
+    InvalidTdsInput: {
+        page_id: string;
+        socket_id: string;
+    };
+}
+
+export function is_error_invalid_tds(
+    res: ErrorResEnum
+): res is InvalidTdsInputRes {
+    return res.hasOwnProperty("InvalidTdsInput");
+}
 
 /*
  * Type and guard for a simple new page
@@ -57,7 +81,7 @@ export function is_dec_socket_res(res: WsResponse): res is DecSocketRes {
 export interface TermDefSocketRes {
     TermDefSocket: {
         page_id: string;
-        res: null;
+        res: TdResEnum;
     };
 }
 

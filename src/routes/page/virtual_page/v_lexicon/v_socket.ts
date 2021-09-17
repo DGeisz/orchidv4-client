@@ -40,7 +40,7 @@ export interface VSocket extends VLex {
     activate_left_cursor: (from_left: boolean) => VSocket;
     activate_right_cursor: (from_left: boolean) => VSocket;
     insert_char: (char: string) => void;
-    delete: () => void;
+    delete: (page_id: string) => void;
     move_cursor_next: () => CursorResponse;
     move_cursor_previous: () => CursorResponse;
     commit_seq: (page_id: string) => void;

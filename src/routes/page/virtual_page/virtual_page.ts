@@ -4,7 +4,11 @@ import {
     is_dec_insert,
     is_dec_socket_res,
     is_dec_update,
+    is_error_invalid_tds,
+    is_error_res,
     is_full_page,
+    is_td_socket_res,
+    is_td_update,
     WsResponse,
 } from "../../../kernel_link/ws_response";
 import { VDecSocket } from "./v_lexicon/v_declaration/v_dec_socket";
@@ -129,7 +133,15 @@ export class VirtualPage implements VSocket {
                         (socket) => socket.get_id() === dec_socket_ser.id
                     );
 
-                    !!socket && socket.update(dec_socket_ser);
+                    if (!!socket) {
+                        socket.update(dec_socket_ser);
+
+                        const move_result = socket.move_cursor_next();
+
+                        if (move_result.tag === CursorResponseTag.MoveSocket) {
+                            this.cursor = move_result.new_socket;
+                        }
+                    }
                 } else if (is_dec_append(dec_res)) {
                     /* Match on append */
                     const { dec_socket_ser } = dec_res.Append;
@@ -199,6 +211,47 @@ export class VirtualPage implements VSocket {
                 this.process_change();
             }
         }
+
+        console.log("This is res", res);
+
+        if (is_td_socket_res(res)) {
+            const { page_id, res: td_res } = res.TermDefSocket;
+            console.log("This is res 2", res);
+
+            if (page_id === this.id) {
+                console.log("This is res 3", res);
+                if (is_td_update(td_res)) {
+                    console.log("This is res 4", res);
+                    const ser = td_res.Update.term_def_socket_ser;
+
+                    const tds = this.get_term_def_socket(ser.id);
+
+                    if (!!tds) {
+                        tds.update(ser);
+                    }
+                }
+
+                this.process_change();
+            }
+        }
+
+        if (is_error_res(res)) {
+            const error_res = res.Error;
+
+            if (is_error_invalid_tds(error_res)) {
+                const { page_id, socket_id } = error_res.InvalidTdsInput;
+
+                if (page_id === this.id) {
+                    const tds = this.get_term_def_socket(socket_id);
+
+                    if (!!tds) {
+                        tds.flag_invalid();
+
+                        this.process_change();
+                    }
+                }
+            }
+        }
     };
 
     /* The following methods pertain to page interaction */
@@ -237,6 +290,7 @@ export class VirtualPage implements VSocket {
             if (!this.controller_paused) {
                 const char = e.key.trim();
 
+                console.log("Here's the char: ", e);
                 if (
                     char.length === 1 &&
                     (/^[a-z0-9]+$/i.test(char) ||
@@ -245,6 +299,7 @@ export class VirtualPage implements VSocket {
                     if (this.select_mode) {
                         this.set_select_seq(this.select_seq + char);
                     } else {
+                        console.log("In here now...", !!this.cursor);
                         !!this.cursor && this.cursor.insert_char(char);
                     }
 
@@ -272,13 +327,12 @@ export class VirtualPage implements VSocket {
 
                 const fraction = 1 / 3;
 
-                let cursor_in_view = false;
                 let cursor_in_top_fraction = false;
                 let cursor_in_bottom_fraction = false;
 
                 const cursor = document.getElementById(CURSOR_NAME);
 
-                if (!!cursor && element_in_view(cursor)) {
+                if (!!cursor) {
                     if (element_in_top(cursor, fraction)) {
                         cursor_in_top_fraction = true;
                     }
@@ -286,8 +340,6 @@ export class VirtualPage implements VSocket {
                     if (element_in_bottom(cursor, fraction)) {
                         cursor_in_bottom_fraction = true;
                     }
-
-                    cursor_in_view = true;
                 }
 
                 if (this.select_mode) {
@@ -350,7 +402,7 @@ export class VirtualPage implements VSocket {
                     } else if (!!this.cursor) {
                         switch (e.key) {
                             case "Backspace": {
-                                this.cursor.delete();
+                                this.cursor.delete(this.id);
                                 break;
                             }
                             case "ArrowLeft": {
@@ -446,14 +498,6 @@ export class VirtualPage implements VSocket {
 
             this.process_change();
         });
-
-        // window.addEventListener("scroll", () => {
-        //     this.controller_paused = true;
-        //
-        //     setTimeout(() => {
-        //         this.controller_paused = false;
-        //     }, 1000);
-        // });
     };
 
     select_socket = (socket_id: string) => {
@@ -474,7 +518,7 @@ export class VirtualPage implements VSocket {
          * cursor to show up */
         let active_socket_id = "";
 
-        if (!this.select_mode && !!this.cursor) {
+        if (this.window_in_focus && !this.select_mode && !!this.cursor) {
             active_socket_id = this.cursor.get_id();
         }
 
@@ -567,5 +611,29 @@ export class VirtualPage implements VSocket {
 
     fill_term_def_socket = (tds_id: string, term_seq: string) => {
         kernel_link.fill_term_def_socket(this.id, tds_id, term_seq);
+    };
+
+    get_term_def_socket = (socket_id: string) => {
+        for (let dec_socket of this.dec_sockets) {
+            const tds = dec_socket.get_term_def_socket(socket_id);
+
+            if (!!tds) {
+                return tds;
+            }
+        }
+
+        return null;
+    };
+
+    get_expr_socket = (socket_id: string) => {
+        for (let dec_socket of this.dec_sockets) {
+            const ex = dec_socket.get_expr_socket(socket_id);
+
+            if (!!ex) {
+                return ex;
+            }
+        }
+
+        return null;
     };
 }

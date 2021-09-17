@@ -501,4 +501,22 @@ export class VExprSocket implements VSocket {
             return labels;
         }
     };
+
+    get_term_def_socket = (socket_id: string) => {
+        if (!!this.expression) {
+            return this.expression.get_term_def_socket(socket_id);
+        } else {
+            return null;
+        }
+    };
+
+    get_expr_socket = (socket_id: string) => {
+        if (socket_id === this.id) {
+            return this;
+        } else if (!!this.expression) {
+            return this.expression.get_expr_socket(socket_id);
+        } else {
+            return null;
+        }
+    };
 }
