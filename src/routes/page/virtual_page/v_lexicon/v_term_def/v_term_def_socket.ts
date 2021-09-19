@@ -1,4 +1,10 @@
-import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
+import {
+    cursor_moved,
+    cursor_success,
+    CursorResponseTag,
+    CursorSide,
+    VSocket,
+} from "../v_socket";
 import { TermDefSocketSer } from "../../../page_types/page_serde/lexicon/term_def/term_def_serialization";
 import {
     ReducedFormTag,
@@ -56,18 +62,37 @@ export class VTermDefSocket implements VSocket {
         const { id, term_seq, representation } = term_def_socket_ser;
 
         if (this.id === id) {
+            /* First reset editor fields */
+            this.left_entry_value = "";
+            this.right_entry_value = "";
+            this.cursor_side = CursorSide.Right;
+            this.cursor_position = 0;
+
             if (is_some(term_seq) && is_some(representation)) {
+                /* In this case, we're clearly filling socket */
                 this.term_seq = term_seq;
                 this.representation = representation;
+
+                /* So we want to return the next socket that comes
+                 * after this one */
+
+                const c_result = this.move_cursor_next();
+
+                switch (c_result.tag) {
+                    case CursorResponseTag.MoveSocket:
+                        return c_result.new_socket;
+                    case CursorResponseTag.Success:
+                        return this;
+                }
             } else {
+                /* In this case, the socket is empty */
                 this.term_seq = undefined;
                 this.representation = undefined;
+
+                /* So we just return ourself */
+                return this;
             }
         }
-
-        this.left_entry_value = "";
-        this.right_entry_value = "";
-        this.cursor_position = 0;
     };
 
     get_id = () => this.id;
@@ -328,7 +353,7 @@ export class VTermDefSocket implements VSocket {
         }
     };
 
-    delete = () => {
+    delete = (page_id: string) => {
         this.check_right_left();
 
         switch (this.cursor_side) {
@@ -356,6 +381,8 @@ export class VTermDefSocket implements VSocket {
                 } else {
                     if (this.delete_prime_count === 0) {
                         this.delete_prime_count = 2;
+                    } else {
+                        kernel_link.delete_tds_contents(page_id, this.id);
                     }
                 }
                 break;

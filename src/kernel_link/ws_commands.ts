@@ -74,4 +74,10 @@ export interface TDFillCmd {
     };
 }
 
-type TermDefCmds = TDFillCmd;
+export interface TDDeleteContentsCmd {
+    DeleteContents: {
+        tds_id: string;
+    };
+}
+
+type TermDefCmds = TDFillCmd | TDDeleteContentsCmd;

@@ -227,7 +227,7 @@ export class VirtualPage implements VSocket {
                     const tds = this.get_term_def_socket(ser.id);
 
                     if (!!tds) {
-                        tds.update(ser);
+                        this.cursor = tds.update(ser);
                     }
                 }
 

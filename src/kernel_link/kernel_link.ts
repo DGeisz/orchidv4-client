@@ -222,6 +222,21 @@ class KernelLink {
 
         this.send_message(cmd);
     };
+
+    delete_tds_contents = (page_id: string, tds_id: string) => {
+        const cmd: TermDefSocketCmd = {
+            TermDefSocket: {
+                page_id,
+                cmd: {
+                    DeleteContents: {
+                        tds_id,
+                    },
+                },
+            },
+        };
+
+        this.send_message(cmd);
+    };
 }
 
 export const kernel_link = new KernelLink();
