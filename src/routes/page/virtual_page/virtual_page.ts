@@ -212,8 +212,6 @@ export class VirtualPage implements VSocket {
             }
         }
 
-        console.log("This is res", res);
-
         if (is_td_socket_res(res)) {
             const { page_id, res: td_res } = res.TermDefSocket;
             console.log("This is res 2", res);

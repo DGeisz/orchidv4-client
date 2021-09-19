@@ -1,10 +1,6 @@
 import { palette } from "../../../../global_styles/palette";
 import { add_latex_color, create_tex_text } from "../../utils/latex_utils";
-
-export interface SocketId {
-    id: string;
-    label: string;
-}
+import { IdTexWidgetProperties } from "../../building_blocks/tex_element/tex_types/tex_types";
 
 export enum ReducedFormTag {
     TexLine,
@@ -17,14 +13,14 @@ export enum ReducedFormTag {
 export interface TexLineType {
     tag: ReducedFormTag.TexLine;
     tex: string;
-    socket_ids: SocketId[];
+    tex_widget_properties: IdTexWidgetProperties[];
 }
 
 export function error_form(): ReducedFormType {
     return {
         tag: ReducedFormTag.TexLine,
         tex: add_latex_color(create_tex_text("ERROR"), palette.danger),
-        socket_ids: [],
+        tex_widget_properties: [],
     };
 }
 
@@ -33,9 +29,9 @@ export interface GlobalHeaderType {
     title: string;
     title_color: string;
     main_tex: string;
-    main_socket_ids: SocketId[];
+    main_widget_properties: IdTexWidgetProperties[];
     label: string;
-    label_socket_ids: SocketId[];
+    label_widget_properties: IdTexWidgetProperties[];
     pg_index: string;
     children: ReducedFormType[];
     left_cursor_active?: boolean;
@@ -46,10 +42,10 @@ export interface GlobalHeaderType {
 export interface SurroundIndentType {
     tag: ReducedFormTag.SurroundIndent;
     header_tex: string;
-    header_socket_ids: SocketId[];
+    header_widget_properties: IdTexWidgetProperties[];
     children: ReducedFormType[];
     footer_tex: string;
-    footer_socket_ids: SocketId[];
+    footer_widget_properties: IdTexWidgetProperties[];
     body_name: string;
     label?: string;
     pg_index?: string;
@@ -58,19 +54,19 @@ export interface SurroundIndentType {
 export interface InlinePropType {
     tag: ReducedFormTag.InlineProp;
     prop: string;
-    prop_socket_ids: SocketId[];
+    prop_widget_properties: IdTexWidgetProperties[];
     explanation: string;
     label: string;
-    label_socket_ids: SocketId[];
+    label_widget_properties: IdTexWidgetProperties[];
     pg_index: string;
 }
 
 export interface LambdaPropType {
     tag: ReducedFormTag.LambdaProp;
     intro_tex: string;
-    intro_socket_ids: SocketId[];
+    intro_widget_properties: IdTexWidgetProperties[];
     label: string;
-    label_socket_ids: SocketId[];
+    label_widget_properties: IdTexWidgetProperties[];
     pg_index: string;
     children: ReducedFormType[];
 }

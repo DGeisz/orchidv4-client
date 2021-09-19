@@ -57,6 +57,8 @@ export const palette = {
     commit_button_gold_hover: "#ded283",
     commit_button_gold_active: "#bdaf53",
 
+    term_hover: "#8fcad9",
+
     danger: "#dc3545",
     danger_hover: "#f2cbcf",
     danger_active: "#e3b6ba",

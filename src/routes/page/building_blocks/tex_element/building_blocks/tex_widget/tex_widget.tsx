@@ -1,23 +1,26 @@
 import React from "react";
-import "./term_widget_styles.scss";
+import "./tex_widget_styles.scss";
+import { TexWidgetProperties } from "./tex_widget_types/tex_widget_types";
 
 interface Props {
-    show_hint: boolean;
-    hint_seq: string;
+    show_label: boolean;
     select_seq: string;
+    properties: TexWidgetProperties;
 }
 
-const TermWidget: React.FC<Props> = (props) => {
-    if (props.show_hint) {
+const TexWidget: React.FC<Props> = (props) => {
+    const { properties } = props;
+
+    if (props.show_label) {
         let left: string;
         let right: string;
 
-        if (props.hint_seq.startsWith(props.select_seq)) {
+        if (properties.label.startsWith(props.select_seq)) {
             left = props.select_seq;
-            right = props.hint_seq.substring(props.select_seq.length);
+            right = properties.label.substring(props.select_seq.length);
         } else {
             left = "";
-            right = props.hint_seq;
+            right = properties.label;
         }
 
         return (
@@ -33,4 +36,4 @@ const TermWidget: React.FC<Props> = (props) => {
     return null;
 };
 
-export default TermWidget;
+export default TexWidget;
