@@ -20,6 +20,9 @@ const Page: React.FC = () => {
     const [select_mode, set_select_mode] = useState<boolean>(false);
     const [select_seq, set_select_seq] = useState<string>("");
 
+    const [edit_rep_mode, set_edit_rep_mode] = useState<boolean>(false);
+    const [edit_rep_id, set_edit_rep_id] = useState<string>("");
+
     const [reduced_forms, set_reduced_forms] = useState<ReducedFormType[]>();
 
     useEffect(() => {
@@ -28,7 +31,9 @@ const Page: React.FC = () => {
                 pid,
                 set_reduced_forms,
                 set_select_mode,
-                set_select_seq
+                set_select_seq,
+                set_edit_rep_mode,
+                set_edit_rep_id
             );
 
             set_select_socket(() => virtual_page.select_socket);
@@ -66,7 +71,14 @@ const Page: React.FC = () => {
     if (!!reduced_forms && !!select_socket) {
         return (
             <PageContext.Provider
-                value={{ select_socket, select_mode, select_seq }}
+                value={{
+                    select_socket,
+                    select_mode,
+                    select_seq,
+                    edit_rep_mode,
+                    edit_rep_id,
+                    page_id: pid,
+                }}
             >
                 <div id="yota" />
                 <div className="page-container">

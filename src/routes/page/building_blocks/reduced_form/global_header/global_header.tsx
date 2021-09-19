@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import "./global_header_styles.scss";
 import "../../../page_styles.scss";
 import ReducedForm from "../reduced_form";
 import { GlobalHeaderType } from "../../../page_types/reduced_form/reduced_form";
-import { PageContext } from "../../../page_context";
 import TexElement from "../../tex_element/tex_element";
 
 interface Props {
@@ -12,8 +11,6 @@ interface Props {
 
 const GlobalHeader: React.FC<Props> = (props) => {
     const { global_header } = props;
-    const { select_socket, select_mode, select_seq } = useContext(PageContext);
-
     const [show_proof, set_proof_visible] = useState<boolean>(true);
 
     return (
@@ -38,24 +35,18 @@ const GlobalHeader: React.FC<Props> = (props) => {
                         <div className="gh-content-left">
                             <TexElement
                                 tex={global_header.main_tex}
-                                id_tex_widget_properties={
+                                tex_widget_properties={
                                     global_header.main_widget_properties
                                 }
-                                select_widget={select_socket}
-                                show_widget_labels={select_mode}
-                                select_seq={select_seq}
                             />
                         </div>
                         <div className="gh-content-right">
                             <div className="pg-label">
                                 <TexElement
                                     tex={global_header.label}
-                                    id_tex_widget_properties={
+                                    tex_widget_properties={
                                         global_header.label_widget_properties
                                     }
-                                    select_widget={select_socket}
-                                    show_widget_labels={select_mode}
-                                    select_seq={select_seq}
                                 />
                             </div>
                             <div className="pg-index">

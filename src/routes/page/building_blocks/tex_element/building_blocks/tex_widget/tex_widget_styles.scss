@@ -1,6 +1,8 @@
 @import "./node_modules/bootstrap/scss/bootstrap";
 @import "src/global_styles/basic_layout";
+@import "src/global_styles/basic_visual";
 @import "src/global_styles/palette";
+@import "../../../../page_styles";
 
 .term-hint-container {
     position: absolute;
@@ -35,4 +37,45 @@
 
 .term-left {
     opacity: 40%;
+}
+
+.outer-rep-container {
+    //flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.rep-buffer {
+    height: 100%;
+    width: 100%;
+}
+
+.rep-lower {
+    position: relative;
+}
+
+.rep-container {
+    top: 0;
+    left: -15px;
+    @extend %shadow-md;
+    padding: 8px 15px;
+    border-radius: 5px;
+    position: absolute;
+    background-color: $white;
+    z-index: 100;
+}
+
+.rep-tex-input {
+    border: 0;
+    border-bottom: solid 1px $semiSoftGray;
+    margin-bottom: 10px;
+}
+
+.rep-tex-input:focus {
+    outline: none;
+}
+
+.rendered-tex {
+    color: black;
+    font-size: $tex-size;
 }

@@ -1,46 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { render } from "react-dom";
 import "./tex_element_styles.scss";
-import { renderToString } from "katex";
 import { element_in_view } from "../../utils/dom_utils";
 import { palette } from "../../../../global_styles/palette";
 import TexWidget from "./building_blocks/tex_widget/tex_widget";
-import { IdTexWidgetProperties } from "./tex_types/tex_types";
+import MiniTex from "./building_blocks/mini_tex/mini_tex";
+import { TexWidgetProperties } from "./building_blocks/tex_widget/tex_widget_types/tex_widget_types";
+import { PageContext } from "../../page_context";
 
 interface Props {
     tex: string;
-    id_tex_widget_properties: IdTexWidgetProperties[];
-    select_widget: (id: string) => void;
-    show_widget_labels: boolean;
-    select_seq: string;
+    tex_widget_properties: TexWidgetProperties[];
 }
 
-const MiniTex = React.memo<{ tex: string }>((props) => {
-    return (
-        <div
-            className="tex-container-tex"
-            dangerouslySetInnerHTML={{
-                __html: renderToString(props.tex, {
-                    trust: true,
-                    displayMode: true,
-                    output: "html",
-                    strict: false,
-                }),
-            }}
-        />
-    );
-});
-
 const TexElement: React.FC<Props> = (props) => {
+    const {
+        select_seq,
+        select_mode: show_widget_labels,
+        select_socket: select_widget,
+        edit_rep_id,
+        edit_rep_mode: edit_rep,
+        page_id,
+    } = useContext(PageContext);
+
     const [widget_containers, set_widget_containers] = useState<
         HTMLDivElement[]
     >([]);
 
     useEffect(() => {
-        props.id_tex_widget_properties.forEach((widget) => {
+        props.tex_widget_properties.forEach((widget) => {
             let tex_node = document.getElementById(widget.id);
 
-            if (!!tex_node) {
+            if (!!tex_node && (!edit_rep || edit_rep_id !== widget.id)) {
                 const og_color = tex_node.style.backgroundColor;
 
                 tex_node.style.transition = "all 100ms ease-in-out";
@@ -48,7 +39,7 @@ const TexElement: React.FC<Props> = (props) => {
                 tex_node.style.position = "relative";
 
                 tex_node.onmousedown = () =>
-                    !!props.select_widget && props.select_widget(widget.id);
+                    !!select_widget && select_widget(widget.id);
 
                 tex_node.onmouseover = () => {
                     if (!!tex_node) {
@@ -70,7 +61,7 @@ const TexElement: React.FC<Props> = (props) => {
 
         const new_containers: HTMLDivElement[] = [];
 
-        props.id_tex_widget_properties.forEach((tex_widget) => {
+        props.tex_widget_properties.forEach((tex_widget) => {
             let tex_node = document.getElementById(tex_widget.id);
 
             if (!!tex_node && element_in_view(tex_node)) {
@@ -79,9 +70,12 @@ const TexElement: React.FC<Props> = (props) => {
 
                 render(
                     <TexWidget
-                        show_label={props.show_widget_labels}
-                        select_seq={props.select_seq}
-                        properties={tex_widget.properties}
+                        show_label={show_widget_labels}
+                        select_seq={select_seq}
+                        edit_rep={edit_rep}
+                        edit_rep_id={edit_rep_id}
+                        page_id={page_id}
+                        properties={tex_widget}
                     />,
                     widget_container
                 );
@@ -89,28 +83,26 @@ const TexElement: React.FC<Props> = (props) => {
                 new_containers.push(widget_container);
             }
 
-            if (props.select_seq === tex_widget.properties.label) {
-                !!props.select_widget && props.select_widget(tex_widget.id);
+            if (select_seq === tex_widget.label) {
+                !!select_widget && select_widget(tex_widget.id);
             }
         });
 
         set_widget_containers(new_containers);
     }, [
-        props.show_widget_labels,
-        props.id_tex_widget_properties,
+        show_widget_labels,
+        props.tex_widget_properties,
         props.tex,
-        props.select_seq,
+        select_seq,
     ]);
 
     return <MiniTex tex={props.tex} />;
 };
 
-export default React.memo(TexElement, (jax1, jax2) => {
+export default React.memo(TexElement, (tex1, tex2) => {
     return (
-        jax1.tex === jax2.tex &&
-        jax1.id_tex_widget_properties === jax2.id_tex_widget_properties &&
-        jax1.show_widget_labels === jax2.show_widget_labels &&
-        jax1.select_seq === jax2.select_seq
+        tex1.tex === tex2.tex &&
+        tex1.tex_widget_properties === tex2.tex_widget_properties
     );
 });
 

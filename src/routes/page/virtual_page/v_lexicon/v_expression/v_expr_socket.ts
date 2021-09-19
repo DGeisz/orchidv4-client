@@ -1,5 +1,5 @@
 import { cursor_moved, cursor_success, CursorSide, VSocket } from "../v_socket";
-import { VLex } from "../v_lex";
+import { LabelBarge, VLex } from "../v_lex";
 import { ExprSocketSer } from "../../../page_types/page_serde/lexicon/expression/expr_serialization";
 import {
     error_form,
@@ -106,9 +106,7 @@ export class VExprSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
                     },
                 ],
             };
@@ -126,9 +124,7 @@ export class VExprSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
                     },
                 ],
             };
@@ -525,4 +521,14 @@ export class VExprSocket implements VSocket {
             return null;
         }
     };
+
+    label_element = (label_barge: LabelBarge) => {
+        if (!!this.expression) {
+            return this.expression.label_element(label_barge);
+        } else {
+            return label_barge;
+        }
+    };
+
+    can_edit_content_rep = () => false;
 }

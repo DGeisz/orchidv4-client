@@ -46,4 +46,5 @@ export interface VSocket extends VLex {
     commit_seq: (page_id: string) => void;
     check_cursor: () => VSocket | null;
     contains_id: (id: string) => boolean;
+    can_edit_content_rep: () => boolean;
 }

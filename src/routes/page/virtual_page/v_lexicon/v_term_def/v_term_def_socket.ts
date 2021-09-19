@@ -23,6 +23,7 @@ import {
 import { is_some } from "../../../page_types/page_serde/utils/rust_option";
 import { palette } from "../../../../../global_styles/palette";
 import { kernel_link } from "../../../../../kernel_link/kernel_link";
+import { LabelBarge } from "../v_lex";
 
 export class VTermDefSocket implements VSocket {
     private readonly id: string;
@@ -137,9 +138,9 @@ export class VTermDefSocket implements VSocket {
                             tex_widget_properties: [
                                 {
                                     id: this.id,
-                                    properties: {
-                                        label: this.seq_label,
-                                    },
+                                    label: this.seq_label,
+                                    term_seq: this.term_seq,
+                                    term_representation: this.representation,
                                 },
                             ],
                         };
@@ -158,9 +159,9 @@ export class VTermDefSocket implements VSocket {
                             tex_widget_properties: [
                                 {
                                     id: this.id,
-                                    properties: {
-                                        label: this.seq_label,
-                                    },
+                                    label: this.seq_label,
+                                    term_seq: this.term_seq,
+                                    term_representation: this.representation,
                                 },
                             ],
                         };
@@ -172,9 +173,9 @@ export class VTermDefSocket implements VSocket {
                     tex_widget_properties: [
                         {
                             id: this.id,
-                            properties: {
-                                label: this.seq_label,
-                            },
+                            label: this.seq_label,
+                            term_seq: this.term_seq,
+                            term_representation: this.representation,
                         },
                     ],
                 };
@@ -206,9 +207,9 @@ export class VTermDefSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
+                        term_seq: this.term_seq,
+                        term_representation: this.representation,
                     },
                 ],
             };
@@ -232,9 +233,9 @@ export class VTermDefSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
+                        term_seq: this.term_seq,
+                        term_representation: this.representation,
                     },
                 ],
             };
@@ -640,5 +641,13 @@ export class VTermDefSocket implements VSocket {
 
     flag_invalid = () => {
         this.is_entry_invalid = true;
+    };
+
+    label_element = (label_barge: LabelBarge) => {
+        return label_barge;
+    };
+
+    can_edit_content_rep = () => {
+        return !!this.term_seq && !!this.representation;
     };
 }

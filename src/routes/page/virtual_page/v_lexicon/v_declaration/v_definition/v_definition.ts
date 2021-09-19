@@ -2,7 +2,7 @@ import {
     DefSer,
     DefVariation,
 } from "../../../../page_types/page_serde/lexicon/declaration/defintion/def_serialization";
-import { VLex } from "../../v_lex";
+import { LabelBarge, VLex } from "../../v_lex";
 import {
     error_form,
     ReducedFormTag,
@@ -22,6 +22,8 @@ export class VDefinition implements VLex {
     private readonly variation: DefVariation;
     private term_def: VTermDef;
     private readonly term_expr: VExprSocket;
+
+    private major_label: number = 0;
 
     constructor(def_ser: DefSer, parent_socket: VSocket) {
         const { term_def_ser, term_expr_ser, variation } = def_ser;
@@ -103,7 +105,7 @@ export class VDefinition implements VLex {
                     main_widget_properties: def_forms[1].tex_widget_properties,
                     label: def_forms[0].tex,
                     label_widget_properties: def_forms[0].tex_widget_properties,
-                    pg_index: "1.infty",
+                    pg_index: `${this.major_label}`,
                     children,
                 };
         }
@@ -159,5 +161,18 @@ export class VDefinition implements VLex {
         } else {
             return this.term_expr.get_expr_socket(socket_id);
         }
+    };
+
+    label_element = (label_barge: LabelBarge) => {
+        if (
+            this.variation === DefVariation.Theorem ||
+            this.variation === DefVariation.Lemma
+        ) {
+            this.major_label = label_barge.pedal_major_label();
+
+            label_barge = this.term_expr.label_element(label_barge);
+        }
+
+        return label_barge;
     };
 }

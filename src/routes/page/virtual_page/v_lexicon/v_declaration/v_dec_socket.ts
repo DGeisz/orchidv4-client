@@ -13,7 +13,7 @@ import {
     ReducedFormTag,
     ReducedFormType,
 } from "../../../page_types/reduced_form/reduced_form";
-import { VLex } from "../v_lex";
+import { LabelBarge, VLex } from "../v_lex";
 import { kernel_link } from "../../../../../kernel_link/kernel_link";
 import {
     active_socket_tex,
@@ -178,9 +178,7 @@ export class VDecSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
                     },
                 ],
             };
@@ -198,9 +196,7 @@ export class VDecSocket implements VSocket {
                 tex_widget_properties: [
                     {
                         id: this.id,
-                        properties: {
-                            label: this.seq_label,
-                        },
+                        label: this.seq_label,
                     },
                 ],
             };
@@ -659,4 +655,14 @@ export class VDecSocket implements VSocket {
             return null;
         }
     };
+
+    label_element = (label_barge: LabelBarge) => {
+        if (!!this.declaration) {
+            return this.declaration.label_element(label_barge);
+        } else {
+            return label_barge;
+        }
+    };
+
+    can_edit_content_rep = () => false;
 }

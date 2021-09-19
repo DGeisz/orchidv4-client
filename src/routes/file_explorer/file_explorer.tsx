@@ -38,12 +38,17 @@ const FileExplorer: React.FC = () => {
     return (
         <div className="file-explorer-page">
             <div className="fe-header">
+                <div className="fe-header-left">
+                    <div
+                        className="new-page-button"
+                        onClick={kernel_link.new_page}
+                    >
+                        New Page
+                    </div>
+                </div>
                 <div className="fe-header-right">
                     <DarkModeSwitch />
                 </div>
-            </div>
-            <div className="new-page-button" onClick={kernel_link.new_page}>
-                New Page
             </div>
         </div>
     );

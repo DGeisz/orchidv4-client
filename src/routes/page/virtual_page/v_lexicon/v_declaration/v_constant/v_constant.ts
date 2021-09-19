@@ -2,7 +2,7 @@ import {
     ConstSer,
     ConstVariation,
 } from "../../../../page_types/page_serde/lexicon/declaration/constant/const_serialization";
-import { VLex } from "../../v_lex";
+import { LabelBarge, VLex } from "../../v_lex";
 import {
     error_form,
     ReducedFormTag,
@@ -21,6 +21,7 @@ export class VConstant implements VLex {
     private readonly variation: ConstVariation;
     private term_def: VTermDef;
     private parent_socket: VSocket;
+    private major_label: number = 0;
 
     constructor(const_ser: ConstSer, parent_socket: VSocket) {
         const { variation, term_def_ser } = const_ser;
@@ -48,12 +49,12 @@ export class VConstant implements VLex {
                     tag: ReducedFormTag.GlobalHeader,
                     title: "Axiom",
                     title_color: palette.uni_form_red,
-                    main_tex: term_forms[0].tex,
-                    main_widget_properties: term_forms[0].tex_widget_properties,
-                    label: term_forms[1].tex,
+                    main_tex: term_forms[1].tex,
+                    main_widget_properties: term_forms[1].tex_widget_properties,
+                    label: term_forms[0].tex,
                     label_widget_properties:
-                        term_forms[1].tex_widget_properties,
-                    pg_index: "1.01",
+                        term_forms[0].tex_widget_properties,
+                    pg_index: `${this.major_label}`,
                     children: [],
                 };
             case ConstVariation.Constant:
@@ -74,7 +75,13 @@ export class VConstant implements VLex {
     };
 
     get_child_sockets = () => {
-        return this.term_def.get_child_sockets();
+        const def_sockets = this.term_def.get_child_sockets();
+
+        if (this.variation === ConstVariation.Constant) {
+            return [...def_sockets];
+        } else {
+            return [def_sockets[1], def_sockets[0]];
+        }
     };
 
     get_socket = (socket_id: string) => {
@@ -95,5 +102,13 @@ export class VConstant implements VLex {
 
     get_expr_socket = (socket_id: string) => {
         return this.term_def.get_expr_socket(socket_id);
+    };
+
+    label_element = (label_barge: LabelBarge) => {
+        if (this.variation === ConstVariation.Axiom) {
+            this.major_label = label_barge.pedal_major_label();
+        }
+
+        return label_barge;
     };
 }

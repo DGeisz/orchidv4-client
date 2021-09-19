@@ -1,4 +1,4 @@
-import { VLex } from "../v_lex";
+import { LabelBarge, VLex } from "../v_lex";
 import { TermDefSer } from "../../../page_types/page_serde/lexicon/term_def/term_def_serialization";
 import { VExprSocket } from "../v_expression/v_expr_socket";
 import { VSocket } from "../v_socket";
@@ -81,5 +81,9 @@ export class VTermDef implements VLex {
 
     get_expr_socket = (socket_id: string) => {
         return this.type_socket.get_expr_socket(socket_id);
+    };
+
+    label_element = (label_barge: LabelBarge) => {
+        return label_barge;
     };
 }

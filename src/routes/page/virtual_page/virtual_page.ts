@@ -24,11 +24,8 @@ import {
 } from "../utils/latex_utils";
 import { kernel_link } from "../../../kernel_link/kernel_link";
 import { hint_strings } from "../../../global_utils/vimium_hints";
-import {
-    element_in_bottom,
-    element_in_top,
-    element_in_view,
-} from "../utils/dom_utils";
+import { element_in_bottom, element_in_top } from "../utils/dom_utils";
+import { LabelBarge } from "./v_lexicon/v_lex";
 
 /* This is just for debugging purposes.
  * If set to false, the cursor keeps blinking
@@ -67,16 +64,26 @@ export class VirtualPage implements VSocket {
     private select_seq: string = "";
     private set_external_select_seq: (seq: string) => void;
 
+    private edit_rep_mode: boolean = false;
+    private set_external_edit_rep_mode: (edit_rep_mode: boolean) => void;
+
+    private edit_rep_id: string = "";
+    private set_external_rep_id: (rep_id: string) => void;
+
     constructor(
         id: string,
         set_reduced_forms: (reduced_forms: ReducedFormType[]) => void,
         set_external_select_mode: (select_mode: boolean) => void,
-        set_external_select_seq: (seq: string) => void
+        set_external_select_seq: (seq: string) => void,
+        set_external_edit_rep_mode: (edit_rep_mode: boolean) => void,
+        set_external_rep_id: (rep_id: string) => void
     ) {
         this.id = id;
         this.set_reduced_forms = set_reduced_forms;
         this.set_external_select_mode = set_external_select_mode;
         this.set_external_select_seq = set_external_select_seq;
+        this.set_external_edit_rep_mode = set_external_edit_rep_mode;
+        this.set_external_rep_id = set_external_rep_id;
 
         this.set_listeners();
     }
@@ -114,6 +121,13 @@ export class VirtualPage implements VSocket {
                 if (!this.cursor && this.dec_sockets.length > 0) {
                     this.cursor =
                         this.dec_sockets[0].activate_left_cursor(true);
+                } else if (!!this.cursor) {
+                    const cursor_id = this.cursor.get_id();
+                    const updated_socket = this.get_socket(cursor_id);
+
+                    if (!!updated_socket) {
+                        this.cursor = updated_socket;
+                    }
                 }
 
                 this.process_change();
@@ -214,12 +228,9 @@ export class VirtualPage implements VSocket {
 
         if (is_td_socket_res(res)) {
             const { page_id, res: td_res } = res.TermDefSocket;
-            console.log("This is res 2", res);
 
             if (page_id === this.id) {
-                console.log("This is res 3", res);
                 if (is_td_update(td_res)) {
-                    console.log("This is res 4", res);
                     const ser = td_res.Update.term_def_socket_ser;
 
                     const tds = this.get_term_def_socket(ser.id);
@@ -276,6 +287,10 @@ export class VirtualPage implements VSocket {
     set_select_mode = (select_mode: boolean) => {
         this.select_mode = select_mode;
         this.set_external_select_mode(select_mode);
+
+        if (select_mode) {
+            this.set_edit_rep_mode(false);
+        }
     };
 
     set_select_seq = (select_seq: string) => {
@@ -283,12 +298,21 @@ export class VirtualPage implements VSocket {
         this.set_external_select_seq(select_seq);
     };
 
+    set_edit_rep_mode = (edit_rep_mode: boolean) => {
+        this.edit_rep_mode = edit_rep_mode;
+        this.set_external_edit_rep_mode(edit_rep_mode);
+
+        if (edit_rep_mode) {
+            this.set_select_mode(false);
+            this.set_select_seq("");
+        }
+    };
+
     set_listeners = () => {
         document.addEventListener("keypress", (e) => {
-            if (!this.controller_paused) {
+            if (!this.controller_paused && !this.edit_rep_mode) {
                 const char = e.key.trim();
 
-                console.log("Here's the char: ", e);
                 if (
                     char.length === 1 &&
                     (/^[a-z0-9]+$/i.test(char) ||
@@ -297,7 +321,6 @@ export class VirtualPage implements VSocket {
                     if (this.select_mode) {
                         this.set_select_seq(this.select_seq + char);
                     } else {
-                        console.log("In here now...", !!this.cursor);
                         !!this.cursor && this.cursor.insert_char(char);
                     }
 
@@ -309,16 +332,31 @@ export class VirtualPage implements VSocket {
         document.addEventListener("keydown", (e) => {
             if (this.controller_paused) {
                 e.preventDefault();
+            } else if (this.edit_rep_mode) {
+                if (e.ctrlKey && !e.shiftKey) {
+                    switch (e.key) {
+                        case "Control":
+                            e.preventDefault();
+                            return;
+                        case "l":
+                            this.set_edit_rep_mode(false);
+                            this.process_change();
+                            return;
+                    }
+                } else {
+                    switch (e.key) {
+                        case "Escape": {
+                            this.set_edit_rep_mode(false);
+                            this.process_change();
+                            return;
+                        }
+                    }
+                }
             } else {
                 if (
-                    [
-                        "Backspace",
-                        // "ArrowDown",
-                        // "ArrowUp",
-                        "ArrowLeft",
-                        "ArrowRight",
-                        "Enter",
-                    ].indexOf(e.key) > -1
+                    ["Backspace", "ArrowLeft", "ArrowRight", "Enter"].indexOf(
+                        e.key
+                    ) > -1
                 ) {
                     e.preventDefault();
                 }
@@ -346,22 +384,35 @@ export class VirtualPage implements VSocket {
                         this.set_select_mode(false);
                     };
 
-                    switch (e.key) {
-                        case "Escape": {
-                            switch_out();
-                            break;
+                    if (e.ctrlKey && !e.shiftKey) {
+                        switch (e.key) {
+                            case "Control":
+                                e.preventDefault();
+                                return;
+                            case "f":
+                                e.preventDefault();
+                                this.set_select_mode(false);
+                                this.set_select_seq("");
+                                break;
                         }
-                        case "Backspace": {
-                            if (this.select_seq.length > 0) {
-                                this.set_select_seq(
-                                    this.select_seq.substring(
-                                        0,
-                                        this.select_seq.length - 1
-                                    )
-                                );
-                            } else {
+                    } else {
+                        switch (e.key) {
+                            case "Escape": {
                                 switch_out();
                                 break;
+                            }
+                            case "Backspace": {
+                                if (this.select_seq.length > 0) {
+                                    this.set_select_seq(
+                                        this.select_seq.substring(
+                                            0,
+                                            this.select_seq.length - 1
+                                        )
+                                    );
+                                } else {
+                                    switch_out();
+                                    break;
+                                }
                             }
                         }
                     }
@@ -376,6 +427,20 @@ export class VirtualPage implements VSocket {
                                 this.set_select_mode(true);
                                 this.set_select_seq("");
                                 break;
+                            case "l":
+                                if (
+                                    !!this.cursor &&
+                                    this.cursor.can_edit_content_rep()
+                                ) {
+                                    this.set_edit_rep_mode(true);
+                                    this.set_external_rep_id(
+                                        this.cursor.get_id()
+                                    );
+                                    this.process_change();
+                                }
+
+                                e.preventDefault();
+                                return;
                             case "j":
                                 e.preventDefault();
                                 this.controller_paused = true;
@@ -396,6 +461,20 @@ export class VirtualPage implements VSocket {
 
                                 window.scrollBy(0, -400);
                                 return;
+                        }
+                    } else if (e.ctrlKey && e.shiftKey) {
+                        switch (e.key) {
+                            case "L":
+                                if (
+                                    !!this.cursor &&
+                                    this.cursor.can_edit_content_rep()
+                                ) {
+                                    e.preventDefault();
+                                    this.set_edit_rep_mode(true);
+                                    this.set_external_rep_id(
+                                        this.cursor.get_id()
+                                    );
+                                }
                         }
                     } else if (!!this.cursor) {
                         switch (e.key) {
@@ -492,6 +571,7 @@ export class VirtualPage implements VSocket {
         window.addEventListener("blur", () => {
             if (BLUR_ON_LEAVE) {
                 this.window_in_focus = false;
+                this.set_edit_rep_mode(false);
             }
 
             this.process_change();
@@ -516,11 +596,20 @@ export class VirtualPage implements VSocket {
          * cursor to show up */
         let active_socket_id = "";
 
-        if (this.window_in_focus && !this.select_mode && !!this.cursor) {
+        if (
+            this.window_in_focus &&
+            !this.select_mode &&
+            !this.edit_rep_mode &&
+            !!this.cursor
+        ) {
             active_socket_id = this.cursor.get_id();
         }
 
+        /* First label the different sockets */
         this.label_sockets();
+
+        /* Then label the actual lex elements*/
+        this.label_element(new LabelBarge());
 
         return this.dec_sockets.map((dec_socket) =>
             dec_socket.get_reduced_form(active_socket_id)
@@ -634,4 +723,14 @@ export class VirtualPage implements VSocket {
 
         return null;
     };
+
+    label_element = (label_barge: LabelBarge) => {
+        for (let dec_socket of this.dec_sockets) {
+            label_barge = dec_socket.label_element(label_barge);
+        }
+
+        return label_barge;
+    };
+
+    can_edit_content_rep = () => false;
 }
