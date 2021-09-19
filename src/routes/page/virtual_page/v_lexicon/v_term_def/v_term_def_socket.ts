@@ -134,10 +134,12 @@ export class VTermDefSocket implements VSocket {
                                     this.representation,
                                 bg_color
                             ),
-                            socket_ids: [
+                            tex_widget_properties: [
                                 {
                                     id: this.id,
-                                    label: this.seq_label,
+                                    properties: {
+                                        label: this.seq_label,
+                                    },
                                 },
                             ],
                         };
@@ -153,10 +155,12 @@ export class VTermDefSocket implements VSocket {
                                     ),
                                 bg_color
                             ),
-                            socket_ids: [
+                            tex_widget_properties: [
                                 {
                                     id: this.id,
-                                    label: this.seq_label,
+                                    properties: {
+                                        label: this.seq_label,
+                                    },
                                 },
                             ],
                         };
@@ -165,10 +169,12 @@ export class VTermDefSocket implements VSocket {
                 return {
                     tag: ReducedFormTag.TexLine,
                     tex: wrap_html_id(this.representation, this.id),
-                    socket_ids: [
+                    tex_widget_properties: [
                         {
                             id: this.id,
-                            label: this.seq_label,
+                            properties: {
+                                label: this.seq_label,
+                            },
                         },
                     ],
                 };
@@ -197,10 +203,12 @@ export class VTermDefSocket implements VSocket {
             return {
                 tag: ReducedFormTag.TexLine,
                 tex,
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };
@@ -221,10 +229,12 @@ export class VTermDefSocket implements VSocket {
             return {
                 tag: ReducedFormTag.TexLine,
                 tex,
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };

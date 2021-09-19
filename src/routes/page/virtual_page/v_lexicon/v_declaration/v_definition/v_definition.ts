@@ -60,23 +60,23 @@ export class VDefinition implements VLex {
                         tag: ReducedFormTag.SurroundIndent,
                         body_name: "body",
                         header_tex: `${base_tex}\\{`,
-                        header_socket_ids: [
-                            ...def_forms[0].socket_ids,
-                            ...def_forms[1].socket_ids,
+                        header_widget_properties: [
+                            ...def_forms[0].tex_widget_properties,
+                            ...def_forms[1].tex_widget_properties,
                         ],
                         children: expr_form,
                         footer_tex: "\\}",
-                        footer_socket_ids: [],
+                        footer_widget_properties: [],
                     };
                 } else {
                     if (expr_form.tag === ReducedFormTag.TexLine) {
                         return {
                             tag: ReducedFormTag.TexLine,
                             tex: `${base_tex} ${expr_form.tex}`,
-                            socket_ids: [
-                                ...def_forms[0].socket_ids,
-                                ...def_forms[1].socket_ids,
-                                ...expr_form.socket_ids,
+                            tex_widget_properties: [
+                                ...def_forms[0].tex_widget_properties,
+                                ...def_forms[1].tex_widget_properties,
+                                ...expr_form.tex_widget_properties,
                             ],
                         };
                     } else {
@@ -100,9 +100,9 @@ export class VDefinition implements VLex {
                             ? palette.exi_form_blue
                             : palette.sel_fg_pink,
                     main_tex: def_forms[1].tex,
-                    main_socket_ids: def_forms[1].socket_ids,
+                    main_widget_properties: def_forms[1].tex_widget_properties,
                     label: def_forms[0].tex,
-                    label_socket_ids: def_forms[0].socket_ids,
+                    label_widget_properties: def_forms[0].tex_widget_properties,
                     pg_index: "1.infty",
                     children,
                 };

@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import "./lambda_prop_styles.scss";
 import ReducedForm from "../reduced_form";
 import { LambdaPropType } from "../../../page_types/reduced_form/reduced_form";
-import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 import { PageContext } from "../../../page_context";
+import TexElement from "../../tex_element/tex_element";
 
 interface Props {
     lambda_prop: LambdaPropType;
@@ -19,9 +19,11 @@ const LambdaProp: React.FC<Props> = (props) => {
                 <div className="lam-header-left">
                     <TexElement
                         tex={lambda_prop.intro_tex}
-                        term_ids={lambda_prop.intro_socket_ids}
-                        select_socket={select_socket}
-                        show_term_hints={select_mode}
+                        id_tex_widget_properties={
+                            lambda_prop.intro_widget_properties
+                        }
+                        select_widget={select_socket}
+                        show_widget_labels={select_mode}
                         select_seq={select_seq}
                     />
                 </div>
@@ -29,10 +31,12 @@ const LambdaProp: React.FC<Props> = (props) => {
                     <div className="pg-label">
                         <TexElement
                             tex={lambda_prop.label}
-                            term_ids={lambda_prop.label_socket_ids}
-                            select_socket={select_socket}
+                            id_tex_widget_properties={
+                                lambda_prop.label_widget_properties
+                            }
+                            select_widget={select_socket}
+                            show_widget_labels={select_mode}
                             select_seq={select_seq}
-                            show_term_hints={select_mode}
                         />
                     </div>
                     <div className="pg-index">({lambda_prop.pg_index})</div>

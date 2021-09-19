@@ -64,7 +64,8 @@ export class VExprSocket implements VSocket {
                                                 LATEX_SPACE +
                                                 child_form.tex
                                         ),
-                                        socket_ids: child_form.socket_ids,
+                                        tex_widget_properties:
+                                            child_form.tex_widget_properties,
                                     };
                                 case CursorSide.Right:
                                     return {
@@ -77,7 +78,8 @@ export class VExprSocket implements VSocket {
                                                     this.cursor_position
                                                 )
                                         ),
-                                        socket_ids: child_form.socket_ids,
+                                        tex_widget_properties:
+                                            child_form.tex_widget_properties,
                                     };
                             }
                             break;
@@ -101,10 +103,12 @@ export class VExprSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };
@@ -119,10 +123,12 @@ export class VExprSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };

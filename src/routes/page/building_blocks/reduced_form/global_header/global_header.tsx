@@ -3,8 +3,8 @@ import "./global_header_styles.scss";
 import "../../../page_styles.scss";
 import ReducedForm from "../reduced_form";
 import { GlobalHeaderType } from "../../../page_types/reduced_form/reduced_form";
-import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 import { PageContext } from "../../../page_context";
+import TexElement from "../../tex_element/tex_element";
 
 interface Props {
     global_header: GlobalHeaderType;
@@ -38,9 +38,11 @@ const GlobalHeader: React.FC<Props> = (props) => {
                         <div className="gh-content-left">
                             <TexElement
                                 tex={global_header.main_tex}
-                                term_ids={global_header.main_socket_ids}
-                                select_socket={select_socket}
-                                show_term_hints={select_mode}
+                                id_tex_widget_properties={
+                                    global_header.main_widget_properties
+                                }
+                                select_widget={select_socket}
+                                show_widget_labels={select_mode}
                                 select_seq={select_seq}
                             />
                         </div>
@@ -48,9 +50,11 @@ const GlobalHeader: React.FC<Props> = (props) => {
                             <div className="pg-label">
                                 <TexElement
                                     tex={global_header.label}
-                                    term_ids={global_header.label_socket_ids}
-                                    select_socket={select_socket}
-                                    show_term_hints={select_mode}
+                                    id_tex_widget_properties={
+                                        global_header.label_widget_properties
+                                    }
+                                    select_widget={select_socket}
+                                    show_widget_labels={select_mode}
                                     select_seq={select_seq}
                                 />
                             </div>

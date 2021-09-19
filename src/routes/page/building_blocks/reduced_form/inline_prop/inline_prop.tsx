@@ -18,9 +18,11 @@ const InlineProp: React.FC<Props> = (props) => {
                 <div className="inline-left-left">
                     <TexElement
                         tex={inline_prop.prop}
-                        term_ids={inline_prop.prop_socket_ids}
-                        select_socket={select_socket}
-                        show_term_hints={select_mode}
+                        id_tex_widget_properties={
+                            inline_prop.prop_widget_properties
+                        }
+                        select_widget={select_socket}
+                        show_widget_labels={select_mode}
                         select_seq={select_seq}
                     />
                 </div>
@@ -32,9 +34,11 @@ const InlineProp: React.FC<Props> = (props) => {
                 <div className="pg-label">
                     <TexElement
                         tex={inline_prop.label}
-                        term_ids={inline_prop.label_socket_ids}
-                        select_socket={select_socket}
-                        show_term_hints={select_mode}
+                        id_tex_widget_properties={
+                            inline_prop.label_widget_properties
+                        }
+                        select_widget={select_socket}
+                        show_widget_labels={select_mode}
                         select_seq={select_seq}
                     />
                 </div>

@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import "./surround_index_styles.scss";
 import ReducedForm from "../reduced_form";
 import { SurroundIndentType } from "../../../page_types/reduced_form/reduced_form";
-import TexElement from "../../../../../global_building_blocks/tex_element/tex_element";
 import { PageContext } from "../../../page_context";
+import TexElement from "../../tex_element/tex_element";
 
 interface Props {
     surround_indent: SurroundIndentType;
@@ -21,9 +21,11 @@ const SurroundIndent: React.FC<Props> = (props) => {
                 <div className="si-header-left">
                     <TexElement
                         tex={surround_indent.header_tex}
-                        term_ids={surround_indent.header_socket_ids}
-                        select_socket={select_socket}
-                        show_term_hints={select_mode}
+                        id_tex_widget_properties={
+                            surround_indent.header_widget_properties
+                        }
+                        select_widget={select_socket}
+                        show_widget_labels={select_mode}
                         select_seq={select_seq}
                     />
                 </div>
@@ -58,9 +60,11 @@ const SurroundIndent: React.FC<Props> = (props) => {
                 <div className="si-footer-left">
                     <TexElement
                         tex={surround_indent.footer_tex}
-                        term_ids={surround_indent.footer_socket_ids}
-                        select_socket={select_socket}
-                        show_term_hints={select_mode}
+                        id_tex_widget_properties={
+                            surround_indent.footer_widget_properties
+                        }
+                        select_widget={select_socket}
+                        show_widget_labels={select_mode}
                         select_seq={select_seq}
                     />
                 </div>

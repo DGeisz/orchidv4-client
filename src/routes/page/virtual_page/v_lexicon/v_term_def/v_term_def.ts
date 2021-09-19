@@ -39,7 +39,7 @@ export class VTermDef implements VLex {
                 {
                     tag: ReducedFormTag.TexLine,
                     tex: add_latex_color("ERROR", palette.warning),
-                    socket_ids: [],
+                    tex_widget_properties: [],
                 },
             ];
         }

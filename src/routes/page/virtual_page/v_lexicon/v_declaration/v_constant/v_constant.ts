@@ -49,9 +49,10 @@ export class VConstant implements VLex {
                     title: "Axiom",
                     title_color: palette.uni_form_red,
                     main_tex: term_forms[0].tex,
-                    main_socket_ids: term_forms[0].socket_ids,
+                    main_widget_properties: term_forms[0].tex_widget_properties,
                     label: term_forms[1].tex,
-                    label_socket_ids: term_forms[1].socket_ids,
+                    label_widget_properties:
+                        term_forms[1].tex_widget_properties,
                     pg_index: "1.01",
                     children: [],
                 };
@@ -64,9 +65,9 @@ export class VConstant implements VLex {
                     )} ${LATEX_SPACE}${LATEX_SPACE} ${term_forms[0].tex} : ${
                         term_forms[1].tex
                     }`,
-                    socket_ids: [
-                        ...term_forms[0].socket_ids,
-                        ...term_forms[1].socket_ids,
+                    tex_widget_properties: [
+                        ...term_forms[0].tex_widget_properties,
+                        ...term_forms[1].tex_widget_properties,
                     ],
                 };
         }

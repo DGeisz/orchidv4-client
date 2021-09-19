@@ -111,7 +111,8 @@ export class VDecSocket implements VSocket {
                                                 child_form.tex,
                                             bg_color
                                         ),
-                                        socket_ids: child_form.socket_ids,
+                                        tex_widget_properties:
+                                            child_form.tex_widget_properties,
                                     };
                                 case CursorSide.Right:
                                     return {
@@ -125,7 +126,8 @@ export class VDecSocket implements VSocket {
                                                 ),
                                             bg_color
                                         ),
-                                        socket_ids: child_form.socket_ids,
+                                        tex_widget_properties:
+                                            child_form.tex_widget_properties,
                                     };
                             }
                             break;
@@ -173,10 +175,12 @@ export class VDecSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };
@@ -191,10 +195,12 @@ export class VDecSocket implements VSocket {
                     ),
                     this.id
                 ),
-                socket_ids: [
+                tex_widget_properties: [
                     {
                         id: this.id,
-                        label: this.seq_label,
+                        properties: {
+                            label: this.seq_label,
+                        },
                     },
                 ],
             };
