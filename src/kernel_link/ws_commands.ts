@@ -80,4 +80,11 @@ export interface TDDeleteContentsCmd {
     };
 }
 
-type TermDefCmds = TDFillCmd | TDDeleteContentsCmd;
+export interface TdSetRepCmd {
+    SetRep: {
+        tds_id: string;
+        rep: string;
+    };
+}
+
+type TermDefCmds = TDFillCmd | TDDeleteContentsCmd | TdSetRepCmd;

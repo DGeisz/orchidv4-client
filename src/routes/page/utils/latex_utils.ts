@@ -1,4 +1,5 @@
 import { palette } from "../../../global_styles/palette";
+import { renderToString } from "katex";
 
 export function add_latex_color(tex: string, color: string) {
     return `{\\color{${color}}{${tex}}}`;
@@ -33,6 +34,7 @@ export function wrap_html_id(tex: string, html_id: string) {
 
 export const LATEX_SPACE = "\\;";
 export const LATEX_EMPTY_SOCKET = "□";
+export const LATEX_NAME = "\\LaTeX";
 
 export const CURSOR_NAME = "cursor";
 export const CURSOR_LATEX: string =
@@ -58,3 +60,23 @@ export const ALLOWED_NON_ALPHA_NUMERIC_CHARS = [
     ":",
     "|",
 ];
+
+export function tex_renders_properly(tex: string): boolean {
+    let renders;
+
+    try {
+        renderToString(tex, {
+            trust: true,
+            displayMode: true,
+            output: "html",
+            strict: false,
+            throwOnError: true,
+        });
+
+        renders = true;
+    } catch (_) {
+        renders = false;
+    }
+
+    return renders;
+}

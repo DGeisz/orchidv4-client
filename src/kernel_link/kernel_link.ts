@@ -237,6 +237,22 @@ class KernelLink {
 
         this.send_message(cmd);
     };
+
+    set_tds_rep = (page_id: string, tds_id: string, rep: string) => {
+        const cmd: TermDefSocketCmd = {
+            TermDefSocket: {
+                page_id,
+                cmd: {
+                    SetRep: {
+                        tds_id,
+                        rep,
+                    },
+                },
+            },
+        };
+
+        this.send_message(cmd);
+    };
 }
 
 export const kernel_link = new KernelLink();

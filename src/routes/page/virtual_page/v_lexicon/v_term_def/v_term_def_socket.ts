@@ -181,12 +181,6 @@ export class VTermDefSocket implements VSocket {
                 };
             }
         } else if (cursor_socket_id === this.id) {
-            console.log(
-                "These are the droid!",
-                this.id,
-                this.left_entry_value,
-                this.rand
-            );
             let tex = wrap_html_id(
                 active_socket_tex(
                     text_with_cursor(
@@ -327,25 +321,14 @@ export class VTermDefSocket implements VSocket {
     };
 
     insert_char = (char: string) => {
-        console.log(
-            "This is it: ",
-            char,
-            this.cursor_position,
-            this.cursor_side,
-            this.left_entry_value,
-            this.id,
-            this.rand
-        );
         this.check_right_left();
 
         switch (this.cursor_side) {
             case CursorSide.Left: {
-                console.log("On the left: ", this.left_entry_value);
                 this.left_entry_value =
                     this.left_entry_value.slice(0, this.cursor_position) +
                     char +
                     this.left_entry_value.slice(this.cursor_position);
-                console.log("On the left II: ", this.left_entry_value);
 
                 this.cursor_position++;
 

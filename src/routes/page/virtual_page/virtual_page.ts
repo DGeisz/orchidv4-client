@@ -111,6 +111,9 @@ export class VirtualPage implements VSocket {
         if (is_full_page(res)) {
             const page = res.FullPage.page;
 
+            this.set_select_mode(false);
+            this.set_edit_rep_mode(false);
+
             /* First make sure that this is even the right page */
             if (page.id === this.id) {
                 /* Now, initialize the dec sockets */

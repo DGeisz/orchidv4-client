@@ -10,15 +10,12 @@ import DarkModeSwitch from "../../global_building_blocks/dark_mode_switch/dark_m
 const FileExplorer: React.FC = () => {
     useEffect(() => {
         kernel_link.set_handler((res) => {
-            console.log("Got res on client");
             /*
              * If the response is a new page response
              * we want to open a new tab with that id
              */
             if (is_new_page(res)) {
                 res = res as NewPageResponse;
-
-                console.log("Made sure it's actually new page", res);
 
                 /*
                  * Now make sure we're the actual client that requested this one.
